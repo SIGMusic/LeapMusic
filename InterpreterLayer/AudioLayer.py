@@ -10,8 +10,9 @@ import time
 #################
 #   VARIABLES   #
 #################
-PRINT_SHAPE = 1 # 0/1
-PRINT_BOUNDARY = 1 # 0/1
+PRINT_SHAPE = 0 # 0/1
+PRINT_BOUNDARY = 0 # 0/1
+PRINT_CONTACT = 1 # 0/1
 ip = "127.0.0.1" # receiving osc from 
 port = 9433
 #################
@@ -24,6 +25,7 @@ def run():
 	
     setOSCHandler('/shape', shape_handler)
     setOSCHandler('/boundary', boundary_handler)
+    setOSCHandler('/contact', contact_handler)
     # SERVER START #
     startOSCServer()
     print "server is running, listening at " + str(ip) + ":" + str(port)
@@ -63,4 +65,8 @@ def boundary_handler(addr, tags, stuff, source) :
         print "data %s" % stuff
         print "---"
         time.sleep(.5) # make packets readable
+def contact_handler(addr, tags, stuff, source) :
+        if(PRINT_CONTACT) :
+            print "there was a collision!"
+
 run()
