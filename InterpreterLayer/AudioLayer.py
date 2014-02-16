@@ -12,7 +12,7 @@ import time
 #################
 PRINT = 1 # 0/1, print messages when recieved
 ip = "127.0.0.1" # receiving osc from 
-port = 9000 # main port
+port = 9433
 #################
 #      MAIN     #
 #################
@@ -41,7 +41,7 @@ def run():
 #   OSC HANDLERS    #
 #####################
 
-# define a message-handler function for the server to call.
+# define a message-handler function for the server to call
 def printing_handler(addr, tags, stuff, source):
     if(PRINT):
         print "---"
