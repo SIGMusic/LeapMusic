@@ -10,7 +10,8 @@ import time
 #################
 #   VARIABLES   #
 #################
-PRINT = 1 # 0/1, print messages when recieved
+PRINT_SHAPE = 1 # 0/1
+PRINT_BOUNDARY = 1 # 0/1
 ip = "127.0.0.1" # receiving osc from 
 port = 9433
 #################
@@ -21,7 +22,8 @@ def run():
 	# OSC SERVER/HANDLERS #
 	initOSCServer(ip, port) # setup OSC server
         setOSCHandler('/print', printing_handler) # adding our print function
-
+        setOSCHandler('/shape', shape_handler)
+        setOSCHandler('/boundary', boundary_handler)
 	# SERVER START #
 	startOSCServer()
 	print "server is running, listening at " + str(ip) + ":" + str(port)
@@ -50,5 +52,24 @@ def printing_handler(addr, tags, stuff, source):
         print "typetags %s" % tags
         print "data %s" % stuff
         print "---"
+        
+def shape_handler(addr, tags, stuff, source) :
+    if(PRINT_SHAPE):
+        print "---"
+        print "received new osc shape msg from %s" % OSC.getUrlStr(source)
+        print "with addr : %s" % addr
+        print "typetags %s" % tags
+        print "data %s" % stuff
+        print "---"
+        time.sleep(.5)
 
+def boundary_handler(addr, tags, stuff, source) :
+    if(PRINT_BOUNDARY) :
+        print "---"
+        print "received new osc boundary msg from %s" % OSC.getUrlStr(source)
+        print "with addr : %s" % addr
+        print "typetags %s" % tags
+        print "data %s" % stuff
+        print "---"
+        time.sleep(.5)
 run()
