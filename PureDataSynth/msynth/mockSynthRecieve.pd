@@ -1,0 +1,26 @@
+#N canvas 563 381 674 461 10;
+#X msg 113 150 1 60 100 0.3;
+#X obj 171 84 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 348 86 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 261 31 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 260 234 s param;
+#X msg 203 150 2 63 90 0.4;
+#X msg 286 150 3 66 80 0.5;
+#X msg 369 147 4 69 100 0.7;
+#X msg 488 149 5 72 100 0.6;
+#X obj 251 307 synthRecieve;
+#X connect 0 0 4 0;
+#X connect 1 0 0 0;
+#X connect 1 0 5 0;
+#X connect 2 0 6 0;
+#X connect 2 0 7 0;
+#X connect 2 0 8 0;
+#X connect 3 0 1 0;
+#X connect 3 0 2 0;
+#X connect 5 0 4 0;
+#X connect 6 0 4 0;
+#X connect 7 0 4 0;
+#X connect 8 0 4 0;
