@@ -12,12 +12,13 @@ class OSCSender:
         self.ip = ip
 
     def start(self):
-        """
+        """ 
         The mainloop of the server,
         """
         while True:
             #send bars to pd socket
             sendOSCMsg("/bars", 0)
+            time.sleep(1);
 
     def set_next_measures(self):
         """
@@ -27,5 +28,5 @@ class OSCSender:
 if __name__ == "__main__":
     ip = "127.0.0.1"
     port = 9002
-    sender = OSCSender(port,ip)
+    sender = OSCSender(port, ip)
     sender.start()
