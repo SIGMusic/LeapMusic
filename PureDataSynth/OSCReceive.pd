@@ -1,9 +1,202 @@
-#N canvas 201 443 901 667 10;
+#N canvas -16 22 1218 827 10;
 #X declare -lib mrpeach;
-#X obj 27 -409 import mrpeach;
-#X obj 27 -375 udpreceive 9003;
-#X obj 27 -340 unpackOSC;
-#X obj 28 -301 routeOSC /sync /async;
-#X connect 0 0 1 0;
+#X obj -348 -444 import mrpeach;
+#X obj -290 -393 udpreceive 9003;
+#X obj -290 -358 unpackOSC;
+#X text -37 -228 This is the master clock;
+#X obj -117 -257 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
+0 1;
+#X obj -117 -199 f;
+#X obj -80 -199 + 1;
+#X obj -116 -227 metro 220;
+#X obj -118 -154 hradio 11 1 0 64 empty empty empty 0 -8 0 10 -262144
+-1 -1 0;
+#X obj -117 -175 mod 64;
+#X obj -13 -266 print;
+#X obj 270 -107 select 0 31;
+#X obj 270 23 udpsend 9004;
+#X obj 270 -20 packOSC;
+#X msg 271 -55 send /measurebuffernumber \$1;
+#X msg 273 -80 1;
+#X text 304 -83 This sends a notification that the buffer is switched
+;
+#N canvas 274 22 711 599 mellosynth_buffer 0;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array midivalue 64 float 3;
+#A 0 52.3119 57.7547 60.4762 64.1047 65.919 66.8262 0 0 0 74.9905 75.8976
+75.8976 77.7119 78.619 78.619 78.619 79.0726 79.5262 79.5262 79.9797
+80.4333 80.4333 80.4333 80.8869 81.3405 82.2476 82.55 82.8524 83.1547
+84.0619 84.969 85.8762 86.3297 86.7833 86.7833 86.7833 87.6905 87.6905
+87.6905 87.6905 87.6905 87.6905 87.6905 87.6905 86.7833 86.3297 85.8762
+84.969 84.0619 83.1547 83.1547 82.2476 81.3405 80.4333 79.5262 77.7119
+75.8976 74.0833 73.1762 70.4547 68.6405 66.8262 65.919 63.1976;
+#X coords 0 0 63 127 200 140 1 0 0;
+#X restore 497 36 graph;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array velocity 64 float 3;
+#A 0 74.2866 24.7622 25.4765 26.1908 26.9051 28.3337 28.6908 29.048
+29.4051 29.7623 30.1194 30.4766 30.8337 31.1909 31.1909 31.1909 31.1909
+31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909
+31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909
+31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909
+31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909
+31.1909 31.1909 31.1909 31.548 31.9052 31.9052 31.9052 31.9052 31.9052
+31.9052 31.9052;
+#X coords 0 0 63 100 200 140 1 0 0;
+#X restore 496 202 graph;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array Harmonicity-Env 64 float 3;
+#A 0 0.250711 0.244282 0.276425 0.314996 0.327852 0.327852 0.289282
+0.269996 0.237854 0.269996 0.334281 0.353566 0.340709 0.321424 0.263568
+0.224997 0.205711 0.237854 0.314996 0.37928 0.37928 0.359995 0.327852
+0.29571 0.250711 0.224997 0.199283 0.179997 0.276425 0.314996 0.334281
+0.314996 0.289282 0.263568 0.237854 0.21214 0.192854 0.173569 0.199283
+0.29571 0.314996 0.308567 0.29571 0.282853 0.269996 0.250711 0.224997
+0.314996 0.321424 0.321424 0.314996 0.29571 0.276425 0.250711 0.372852
+0.340709 0.263568 0.385709 0.385709 0.37928 0.359995 0.308567 0.314996
+0.340709;
+#X coords 0 0 63 0.9 200 140 1 0 0;
+#X restore 497 378 graph;
+#X obj 104 17 inlet;
+#X obj 46 556 outlet;
+#X obj 168 558 outlet;
+#X obj 250 551 outlet;
+#X obj 20 17 inlet;
+#X text 16 0 Bang event;
+#X text 82 -2 index to play;
+#X text 178 -3 set midi;
+#X obj 44 354 tabread midivalue;
+#X obj 161 386 tabread velocity;
+#X obj 250 419 tabread Harmonicity-Env;
+#X obj 188 52 routeOSC /midivalue /velocity /he;
+#X obj 188 17 inlet;
+#X obj 189 96 routeOSC /value /index;
+#X obj 190 149 tabwrite midivalue;
+#X obj 220 185 routeOSC /value /index;
+#X obj 314 278 routeOSC /value /index;
+#X obj 312 331 tabwrite midivalue;
+#X obj 227 236 tabwrite velocity;
+#X connect 3 0 11 0;
+#X connect 3 0 12 0;
+#X connect 3 0 13 0;
+#X connect 7 0 11 0;
+#X connect 7 0 12 0;
+#X connect 7 0 13 0;
+#X connect 11 0 4 0;
+#X connect 12 0 5 0;
+#X connect 13 0 6 0;
+#X connect 14 0 16 0;
+#X connect 14 1 18 0;
+#X connect 14 2 19 0;
+#X connect 15 0 14 0;
+#X connect 16 0 17 0;
+#X connect 16 1 17 1;
+#X connect 18 0 21 0;
+#X connect 18 1 21 1;
+#X connect 19 0 20 0;
+#X connect 19 1 20 1;
+#X restore -246 163 pd mellosynth_buffer;
+#X obj -218 226 mellosynth;
+#X obj -130 310 dac~;
+#N canvas 581 57 614 384 drum_buffer 0;
+#X obj 35 24 inlet;
+#X obj 128 21 inlet;
+#X obj 40 201 outlet;
+#X text 114 1 index to play;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array drumbars 64 float 3;
+#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X coords 0 1 63 -1 200 140 1;
+#X restore 355 21 graph;
+#X obj 221 23 inlet;
+#X text 210 3 set drumbars;
+#X text 21 3 bang receive;
+#X obj 40 108 tabread drumbars;
+#X obj 40 149 select 1;
+#X obj 187 104 routeOSC /drumbars;
+#X obj 186 185 tabwrite drumbars;
+#X obj 187 145 routeOSC /value /index;
+#X connect 1 0 8 0;
+#X connect 5 0 10 0;
+#X connect 8 0 9 0;
+#X connect 9 0 2 0;
+#X connect 10 0 12 0;
+#X connect 12 0 11 0;
+#X connect 12 1 11 1;
+#X restore -97 162 pd drum_buffer;
+#X obj -96 228 kick;
+#N canvas 802 64 638 360 snare_buffer 1;
+#X obj 45 34 inlet;
+#X obj 138 31 inlet;
+#X obj 50 211 outlet;
+#X text 124 11 index to play;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array snare 64 float 3;
+#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X coords 0 1 63 -1 200 140 1 0 0;
+#X restore 365 31 graph;
+#X obj 231 33 inlet;
+#X text 220 13 set drumbars;
+#X text 31 13 bang receive;
+#X obj 50 159 select 1;
+#X obj 197 155 routeOSC /value /index;
+#X obj 50 118 tabread snarebars;
+#X obj 197 113 routeOSC /snarebars;
+#X obj 196 195 tabwrite snarebars;
+#X connect 1 0 10 0;
+#X connect 5 0 11 0;
+#X connect 8 0 2 0;
+#X connect 9 0 12 0;
+#X connect 9 1 12 1;
+#X connect 10 0 8 0;
+#X connect 11 0 9 0;
+#X restore 7 162 pd snare_buffer;
+#X text 29 -269 comment;
+#X text 74 -187 There are two primary buffers 0-31 32-63 \, pure data
+plays one half while notes are loaded to the other half;
+#X text -146 189 The buffer contains instrument events to be played
+\, sync messages are sent to change the values;
+#X floatatom -339 206 5 0 0 0 - - -;
+#X floatatom -308 239 5 0 0 0 - - -;
+#X floatatom -273 275 5 0 0 0 - - -;
+#X obj 4 227 snare-wt~;
+#X obj -126 -80 routeOSC /mellosynth_buffer /drum_buffer /snare_buffer
+;
+#X obj -289 -319 routeOSC /async /sync /start /tempo;
+#X obj -138 274 *~ 8;
 #X connect 1 0 2 0;
-#X connect 2 0 3 0;
+#X connect 2 0 31 0;
+#X connect 4 0 7 0;
+#X connect 5 0 6 0;
+#X connect 5 0 9 0;
+#X connect 6 0 5 1;
+#X connect 7 0 5 0;
+#X connect 8 0 11 0;
+#X connect 8 0 17 1;
+#X connect 8 0 20 1;
+#X connect 9 0 8 0;
+#X connect 11 0 15 0;
+#X connect 11 1 15 0;
+#X connect 13 0 12 0;
+#X connect 14 0 13 0;
+#X connect 15 0 14 0;
+#X connect 17 0 18 0;
+#X connect 17 0 26 0;
+#X connect 17 1 18 1;
+#X connect 17 1 27 0;
+#X connect 17 2 18 2;
+#X connect 17 2 28 0;
+#X connect 18 0 32 0;
+#X connect 18 1 32 0;
+#X connect 20 0 21 0;
+#X connect 21 0 32 0;
+#X connect 29 0 32 0;
+#X connect 30 0 17 2;
+#X connect 31 1 30 0;
+#X connect 31 2 4 0;
+#X connect 31 3 7 1;
+#X connect 31 4 10 0;
+#X connect 32 0 19 0;
+#X connect 32 0 19 1;
