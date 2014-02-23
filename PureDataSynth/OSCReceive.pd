@@ -1,16 +1,16 @@
-#N canvas -16 22 1218 827 10;
+#N canvas 146 22 1218 827 10;
 #X declare -lib mrpeach;
 #X obj -348 -444 import mrpeach;
 #X obj -290 -393 udpreceive 9003;
 #X obj -290 -358 unpackOSC;
 #X text -37 -228 This is the master clock;
 #X obj -117 -257 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
-0 1;
+1 1;
 #X obj -117 -199 f;
 #X obj -80 -199 + 1;
 #X obj -116 -227 metro 220;
 #X obj -118 -154 hradio 11 1 0 64 empty empty empty 0 -8 0 10 -262144
--1 -1 0;
+-1 -1 41;
 #X obj -117 -175 mod 64;
 #X obj -13 -266 print;
 #X obj 270 -107 select 0 31;
@@ -30,19 +30,19 @@
 87.6905 87.6905 87.6905 87.6905 87.6905 87.6905 86.7833 86.3297 85.8762
 84.969 84.0619 83.1547 83.1547 82.2476 81.3405 80.4333 79.5262 77.7119
 75.8976 74.0833 73.1762 70.4547 68.6405 66.8262 65.919 63.1976;
-#X coords 0 0 63 127 200 140 1 0 0;
+#X coords 0 127 63 0 200 140 1 0 0;
 #X restore 497 36 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array velocity 64 float 3;
-#A 0 74.2866 24.7622 25.4765 26.1908 26.9051 28.3337 28.6908 29.048
-29.4051 29.7623 30.1194 30.4766 30.8337 31.1909 31.1909 31.1909 31.1909
-31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909
-31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909
-31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909
-31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909 31.1909
-31.1909 31.1909 31.1909 31.548 31.9052 31.9052 31.9052 31.9052 31.9052
-31.9052 31.9052;
-#X coords 0 0 63 100 200 140 1 0 0;
+#A 0 9.76207 11.1907 11.905 13.3335 14.7621 15.7145 16.6669 17.6193
+18.3336 18.6908 19.0479 19.7622 20.4765 20.4765 20.4765 20.8336 21.1908
+21.1908 21.1908 21.1908 21.1908 21.1908 21.1908 21.1908 21.1908 21.1908
+21.1908 21.1908 21.1908 21.1908 21.1908 21.1908 21.1908 21.1908 21.1908
+21.1908 20.4765 20.4765 20.4765 19.7622 19.7622 19.405 19.0479 19.0479
+18.3336 18.3336 17.6193 16.905 16.1907 15.4764 14.7621 11.905 11.1907
+9.76207 9.04778 8.33348 8.33348 7.61919 7.61919 7.61919 7.61919 7.61919
+7.61919 7.61919;
+#X coords 0 100 63 0 200 140 1 0 0;
 #X restore 496 202 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array Harmonicity-Env 64 float 3;
@@ -55,7 +55,7 @@
 0.314996 0.321424 0.321424 0.314996 0.29571 0.276425 0.250711 0.372852
 0.340709 0.263568 0.385709 0.385709 0.37928 0.359995 0.308567 0.314996
 0.340709;
-#X coords 0 0 63 0.9 200 140 1 0 0;
+#X coords 0 0.9 63 0 200 140 1 0 0;
 #X restore 497 378 graph;
 #X obj 104 17 inlet;
 #X obj 46 556 outlet;
@@ -97,17 +97,23 @@
 #X connect 19 1 20 1;
 #X restore -246 163 pd mellosynth_buffer;
 #X obj -218 226 mellosynth;
-#X obj -130 310 dac~;
-#N canvas 581 57 614 384 drum_buffer 0;
+#X obj -103 358 dac~;
+#N canvas 581 57 614 384 drum_buffer 1;
 #X obj 35 24 inlet;
 #X obj 128 21 inlet;
 #X obj 40 201 outlet;
 #X text 114 1 index to play;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array drumbars 64 float 3;
-#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
-#X coords 0 1 63 -1 200 140 1;
+#A 0 1 1 1.01428 0.99999 0.985704 0.971418 0.971418 0.957133 1 0.928562
+0.914276 0.907133 0.899991 0.899991 0.899991 0.899991 1 0.899991 0.899991
+0.899991 0.899991 0.899991 0.899991 0.899991 0.899991 0.899991 0.899991
+0.899991 0.899991 0.899991 1 0.899991 0.899991 0.899991 0.899991 0.899991
+0.899991 0.899991 0.899991 0.899991 0.899991 0.899991 0.899991 0.899991
+0.899991 1 0.899991 0.909514 0.919038 1 0.932133 0.935704 0.939276
+0.942847 0.942847 0.942847 0.942847 1 0.942847 0.957133 1 0.971418
+0.985704 0.985704;
+#X coords 0 2 63 0 200 140 1 0 0;
 #X restore 355 21 graph;
 #X obj 221 23 inlet;
 #X text 210 3 set drumbars;
@@ -117,10 +123,17 @@
 #X obj 187 104 routeOSC /drumbars;
 #X obj 186 185 tabwrite drumbars;
 #X obj 187 145 routeOSC /value /index;
+#X floatatom 140 78 5 0 0 0 - - -;
+#X floatatom 95 180 5 0 0 0 - - -;
+#X obj 116 215 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
 #X connect 1 0 8 0;
+#X connect 1 0 13 0;
 #X connect 5 0 10 0;
 #X connect 8 0 9 0;
 #X connect 9 0 2 0;
+#X connect 9 0 14 0;
+#X connect 9 0 15 0;
 #X connect 10 0 12 0;
 #X connect 12 0 11 0;
 #X connect 12 1 11 1;
@@ -132,10 +145,10 @@
 #X obj 50 211 outlet;
 #X text 124 11 index to play;
 #N canvas 0 22 450 278 (subpatch) 0;
-#X array snare 64 float 3;
-#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
-#X coords 0 1 63 -1 200 140 1 0 0;
+#X array snarebars 64 float 3;
+#A 0 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 1
+0 0 0 0 1 0 1 0 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 1 0 0 0 0 0;
+#X coords 0 2 63 0 200 140 1 0 0;
 #X restore 365 31 graph;
 #X obj 231 33 inlet;
 #X text 220 13 set drumbars;
@@ -145,9 +158,12 @@
 #X obj 50 118 tabread snarebars;
 #X obj 197 113 routeOSC /snarebars;
 #X obj 196 195 tabwrite snarebars;
+#X obj 114 201 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
 #X connect 1 0 10 0;
 #X connect 5 0 11 0;
 #X connect 8 0 2 0;
+#X connect 8 0 13 0;
 #X connect 9 0 12 0;
 #X connect 9 1 12 1;
 #X connect 10 0 8 0;
@@ -162,10 +178,16 @@ plays one half while notes are loaded to the other half;
 #X floatatom -308 239 5 0 0 0 - - -;
 #X floatatom -273 275 5 0 0 0 - - -;
 #X obj 4 227 snare-wt~;
-#X obj -126 -80 routeOSC /mellosynth_buffer /drum_buffer /snare_buffer
+#X obj -125 -80 routeOSC /mellosynth_buffer /drum_buffer /snare_buffer
 ;
 #X obj -289 -319 routeOSC /async /sync /start /tempo;
-#X obj -138 274 *~ 8;
+#X obj -102 297 *~ 0.8;
+#X obj -169 260 *~ 0.02;
+#X obj -96 258 *~ 2;
+#X obj -23 276 *~ 1;
+#X obj -104 329 lop~;
+#X obj 40 310 hsl 128 15 0 1000 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 11200 1;
 #X connect 1 0 2 0;
 #X connect 2 0 31 0;
 #X connect 4 0 7 0;
@@ -176,6 +198,7 @@ plays one half while notes are loaded to the other half;
 #X connect 8 0 11 0;
 #X connect 8 0 17 1;
 #X connect 8 0 20 1;
+#X connect 8 0 22 1;
 #X connect 9 0 8 0;
 #X connect 11 0 15 0;
 #X connect 11 1 15 0;
@@ -188,15 +211,23 @@ plays one half while notes are loaded to the other half;
 #X connect 17 1 27 0;
 #X connect 17 2 18 2;
 #X connect 17 2 28 0;
-#X connect 18 0 32 0;
-#X connect 18 1 32 0;
+#X connect 18 0 33 0;
+#X connect 18 1 33 0;
 #X connect 20 0 21 0;
-#X connect 21 0 32 0;
-#X connect 29 0 32 0;
+#X connect 21 0 34 0;
+#X connect 22 0 29 0;
+#X connect 29 0 35 0;
 #X connect 30 0 17 2;
+#X connect 30 1 20 2;
+#X connect 30 2 22 2;
 #X connect 31 1 30 0;
 #X connect 31 2 4 0;
 #X connect 31 3 7 1;
 #X connect 31 4 10 0;
-#X connect 32 0 19 0;
-#X connect 32 0 19 1;
+#X connect 32 0 36 0;
+#X connect 33 0 32 0;
+#X connect 34 0 32 0;
+#X connect 35 0 32 0;
+#X connect 36 0 19 0;
+#X connect 36 0 19 1;
+#X connect 37 0 36 1;
