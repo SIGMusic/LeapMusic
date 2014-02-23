@@ -2,9 +2,9 @@
 #   IMPORTS	#
 #################
 import sys
-from simpleOSC import initOSCServer, startOSCServer, closeOSC, setOSCHandler
+from simpleOSC import initOSCClient, sendOSCMsg, initOSCServer, startOSCServer, closeOSC, setOSCHandler
 import OSC
-
+import thread
 import time
 
 
@@ -21,7 +21,6 @@ def shape_handler(addr, tags, stuff, source) :
         print "data %s" % stuff
         print "shape=" + stuff[0]
         print "---"
-        time.sleep(.5)
 
 def boundary_handler(addr, tags, stuff, source) :
     if(layer.PRINT_BOUNDARY) :
@@ -61,10 +60,8 @@ def finger_handler(addr, tags, stuff, source) :
 def background_handler(addr, tags, stuff, source) :
     if(layer.PRINT_BACKGROUND) :
         print "---"
-        print "received new osc background msg from %s" % OSC.getUrlStr(source)
-        print "with addr : %s" % addr
-        print "typetags %s" % tags
-        print "data %s" % stuff
+        print " sending " + str(stuff[0]/360) + " to 9003"
+        sendOSCMsg("/async/hue", [stuff[0]/360])
         print "---"
 
 
@@ -73,19 +70,20 @@ class AudioLayer(object):
         #################
         #   VARIABLES   #
         #################
-        self.PRINT_SHAPE = 1 # 0/1
+        self.PRINT_SHAPE = 0 # 0/1
         self.PRINT_BOUNDARY = 0 # 0/1
         self.PRINT_CONTACT = 0 # 0/1
         self.PRINT_HAND = 0 # 0/1
         self.PRINT_FINGER = 0 # 0/1
-        self.PRINT_BACKGROUND = 0 # 0/1
+        self.PRINT_BACKGROUND = 1 # 0/1
         self.ip = "127.0.0.1" # receiving osc from 
-        self.port = 9433
+        self.rport = 9433
+        self.sport = 9003
         
-    def run(self):
+    def run_server(self):
 
         # OSC SERVER/HANDLERS #
-        initOSCServer(self.ip, self.port) # setup OSC server
+        initOSCServer(self.ip, self.rport) # setup OSC server
 	
         setOSCHandler('/shape', shape_handler)
         setOSCHandler('/boundary', boundary_handler)
@@ -95,8 +93,8 @@ class AudioLayer(object):
         setOSCHandler('/background', background_handler)
         # SERVER START #
         startOSCServer()
-        print "server is running, listening at " + str(self.ip) + ":" + str(self.port)
-        print "use Ctrl-C to quit"
+        print "server is running, listening at " + str(self.ip) + ":" + str(self.rport)
+        print "use Ctrl-C to quit."
 
         # SERVER LOOP #
         try:
@@ -107,5 +105,16 @@ class AudioLayer(object):
             print "closing all OSC connections... and exit"
             closeOSC() # close the osc connection before exiting	
 
+    def run_client(self):
+        initOSCClient(self.ip,self.sport)
+        print "client is running, sending to " + str(self.ip) +":" + str(self.sport)
+        while(1):
+            time.sleep(5)
+            
 layer = AudioLayer()
-layer.run()
+try:
+    thread.start_new_thread(layer.run_server, () )
+    time.sleep(5)
+    layer.run_client()
+except:
+    print "error"
