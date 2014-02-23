@@ -1,16 +1,16 @@
-#N canvas 146 22 1218 827 10;
+#N canvas 346 22 1218 827 10;
 #X declare -lib mrpeach;
 #X obj -348 -444 import mrpeach;
 #X obj -290 -393 udpreceive 9003;
 #X obj -290 -358 unpackOSC;
 #X text -37 -228 This is the master clock;
 #X obj -117 -257 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
-1 1;
+0 1;
 #X obj -117 -199 f;
 #X obj -80 -199 + 1;
 #X obj -116 -227 metro 220;
 #X obj -118 -154 hradio 11 1 0 64 empty empty empty 0 -8 0 10 -262144
--1 -1 41;
+-1 -1 31;
 #X obj -117 -175 mod 64;
 #X obj -13 -266 print;
 #X obj 270 -107 select 0 31;
@@ -24,12 +24,12 @@
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array midivalue 64 float 3;
 #A 0 52.3119 57.7547 60.4762 64.1047 65.919 66.8262 0 0 0 74.9905 75.8976
-75.8976 77.7119 78.619 78.619 78.619 79.0726 79.5262 79.5262 79.9797
-80.4333 80.4333 80.4333 80.8869 81.3405 82.2476 82.55 82.8524 83.1547
-84.0619 84.969 85.8762 86.3297 86.7833 86.7833 86.7833 87.6905 87.6905
-87.6905 87.6905 87.6905 87.6905 87.6905 87.6905 86.7833 86.3297 85.8762
-84.969 84.0619 83.1547 83.1547 82.2476 81.3405 80.4333 79.5262 77.7119
-75.8976 74.0833 73.1762 70.4547 68.6405 66.8262 65.919 63.1976;
+75.8976 77.7119 0 0 0 79.0726 79.5262 79.5262 79.9797 80.4333 80.4333
+0 80.8869 81.3405 82.2476 82.55 82.8524 83.1547 0 84.969 85.8762 86.3297
+86.7833 86.7833 86.7833 87.6905 87.6905 87.6905 87.6905 87.6905 87.6905
+87.6905 87.6905 86.7833 86.3297 85.8762 84.969 84.0619 83.1547 83.1547
+82.2476 81.3405 80.4333 0 77.7119 75.8976 74.0833 73.1762 0 68.6405
+66.8262 65.919 63.1976;
 #X coords 0 127 63 0 200 140 1 0 0;
 #X restore 497 36 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
@@ -98,7 +98,7 @@
 #X restore -246 163 pd mellosynth_buffer;
 #X obj -218 226 mellosynth;
 #X obj -103 358 dac~;
-#N canvas 581 57 614 384 drum_buffer 1;
+#N canvas 581 57 614 384 drum_buffer 0;
 #X obj 35 24 inlet;
 #X obj 128 21 inlet;
 #X obj 40 201 outlet;
@@ -139,7 +139,7 @@
 #X connect 12 1 11 1;
 #X restore -97 162 pd drum_buffer;
 #X obj -96 228 kick;
-#N canvas 802 64 638 360 snare_buffer 1;
+#N canvas 802 64 638 360 snare_buffer 0;
 #X obj 45 34 inlet;
 #X obj 138 31 inlet;
 #X obj 50 211 outlet;
@@ -187,7 +187,20 @@ plays one half while notes are loaded to the other half;
 #X obj -23 276 *~ 1;
 #X obj -104 329 lop~;
 #X obj 40 310 hsl 128 15 0 1000 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 11200 1;
+-1 -1 5000 1;
+#X obj 250 258 packOSC;
+#X obj 435 260 packOSC;
+#X msg 250 229 send /percussion s "kick";
+#X obj 287 159 packOSC;
+#X msg 287 125 send /percussion siii "m1" \$1 \$2 \$3;
+#X text 292 72 send m1 to leap-thing;
+#X text 277 197 send kick to leap-thing;
+#X text 486 205 send snare to leap-thing;
+#X obj 528 -256 t b f;
+#X obj 290 93 pack 0 0 0;
+#X msg 439 226 send /percussion s "snare";
+#X obj 343 314 udpsend;
+#X msg 234 -273 connect localhost 13372;
 #X connect 1 0 2 0;
 #X connect 2 0 31 0;
 #X connect 4 0 7 0;
@@ -207,13 +220,18 @@ plays one half while notes are loaded to the other half;
 #X connect 15 0 14 0;
 #X connect 17 0 18 0;
 #X connect 17 0 26 0;
+#X connect 17 0 47 0;
 #X connect 17 1 18 1;
 #X connect 17 1 27 0;
+#X connect 17 1 47 1;
 #X connect 17 2 18 2;
 #X connect 17 2 28 0;
+#X connect 17 2 47 2;
 #X connect 18 0 33 0;
 #X connect 18 1 33 0;
 #X connect 20 0 21 0;
+#X connect 20 0 40 0;
+#X connect 20 0 48 0;
 #X connect 21 0 34 0;
 #X connect 22 0 29 0;
 #X connect 29 0 35 0;
@@ -231,3 +249,11 @@ plays one half while notes are loaded to the other half;
 #X connect 36 0 19 0;
 #X connect 36 0 19 1;
 #X connect 37 0 36 1;
+#X connect 38 0 49 0;
+#X connect 39 0 49 0;
+#X connect 40 0 38 0;
+#X connect 41 0 49 0;
+#X connect 42 0 41 0;
+#X connect 47 0 42 0;
+#X connect 48 0 39 0;
+#X connect 50 0 49 0;
