@@ -1,4 +1,4 @@
-#N canvas 346 22 1218 827 10;
+#N canvas 245 26 1218 827 10;
 #X declare -lib mrpeach;
 #X obj -348 -444 import mrpeach;
 #X obj -290 -393 udpreceive 9003;
@@ -20,7 +20,7 @@
 #X msg 273 -80 1;
 #X text 304 -83 This sends a notification that the buffer is switched
 ;
-#N canvas 274 22 711 599 mellosynth_buffer 0;
+#N canvas 274 22 711 599 mellosynth_buffer 1;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array midivalue 64 float 3;
 #A 0 52.3119 57.7547 60.4762 64.1047 65.919 66.8262 0 0 0 74.9905 75.8976
@@ -200,7 +200,7 @@ plays one half while notes are loaded to the other half;
 #X msg 439 226 send /percussion s "snare";
 #X obj 343 314 udpsend;
 #X msg 234 -273 connect localhost 13371;
-#X msg 287 125 send /minstruments siii "m1" \$1 \$2 \$3;
+#X msg 287 125 send /minstruments sfff "m1" \$1 \$2 \$3;
 #X connect 1 0 2 0;
 #X connect 2 0 31 0;
 #X connect 4 0 7 0;
