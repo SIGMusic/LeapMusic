@@ -5,12 +5,12 @@
 #X obj -290 -358 unpackOSC;
 #X text -37 -228 This is the master clock;
 #X obj -117 -257 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
-1 1;
+0 1;
 #X obj -117 -199 f;
 #X obj -80 -199 + 1;
 #X obj -116 -227 metro 220;
 #X obj -118 -154 hradio 11 1 0 64 empty empty empty 0 -8 0 10 -262144
--1 -1 12;
+-1 -1 0;
 #X obj -117 -175 mod 64;
 #X obj -13 -266 print;
 #X obj 270 -107 select 0 31;
@@ -201,6 +201,8 @@ plays one half while notes are loaded to the other half;
 #X obj 343 314 udpsend;
 #X msg 234 -273 connect localhost 13371;
 #X msg 287 125 send /minstruments "m1" \$1 \$2 \$3;
+#X obj -281 -79 routeOSC /hue;
+#X floatatom -205 -16 5 0 0 0 - - -;
 #X connect 1 0 2 0;
 #X connect 2 0 31 0;
 #X connect 4 0 7 0;
@@ -238,6 +240,7 @@ plays one half while notes are loaded to the other half;
 #X connect 30 0 17 2;
 #X connect 30 1 20 2;
 #X connect 30 2 22 2;
+#X connect 31 0 51 0;
 #X connect 31 1 30 0;
 #X connect 31 2 4 0;
 #X connect 31 3 7 1;
@@ -257,3 +260,4 @@ plays one half while notes are loaded to the other half;
 #X connect 47 0 39 0;
 #X connect 49 0 48 0;
 #X connect 50 0 41 0;
+#X connect 51 1 52 0;
