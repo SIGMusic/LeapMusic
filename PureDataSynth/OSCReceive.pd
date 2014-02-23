@@ -10,7 +10,7 @@
 #X obj -80 -199 + 1;
 #X obj -116 -227 metro 220;
 #X obj -118 -154 hradio 11 1 0 64 empty empty empty 0 -8 0 10 -262144
--1 -1 31;
+-1 -1 7;
 #X obj -117 -175 mod 64;
 #X obj -13 -266 print;
 #X obj 270 -107 select 0 31;
@@ -187,7 +187,7 @@ plays one half while notes are loaded to the other half;
 #X obj -23 276 *~ 1;
 #X obj -104 329 lop~;
 #X obj 40 310 hsl 128 15 0 1000 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 5000 1;
+-1 -1 0 1;
 #X obj 250 258 packOSC;
 #X obj 435 260 packOSC;
 #X msg 250 229 send /percussion s "kick";
@@ -200,7 +200,7 @@ plays one half while notes are loaded to the other half;
 #X obj 290 93 pack 0 0 0;
 #X msg 439 226 send /percussion s "snare";
 #X obj 343 314 udpsend;
-#X msg 234 -273 connect localhost 13372;
+#X msg 234 -273 connect localhost 13371;
 #X connect 1 0 2 0;
 #X connect 2 0 31 0;
 #X connect 4 0 7 0;
