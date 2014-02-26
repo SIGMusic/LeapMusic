@@ -8,3 +8,13 @@ Please put your stuff in the respective folders:
 Pure Data Synths: Only pure data code in here  
 Interpreter Layer: Put other stuff like java in here  
 
+To run the synth:
+0) get Pure Data Extended
+1) get rjlib from the link above
+2) copy the "rj" folder and put it into the "PureDataSynth" folder
+3) rename "rj" to "rjlib"
+4) open main.pd with pure data
+5) click on all the "connect localhost ...." 
+6) click on the box above the metronome
+
+questions?(You probably have alot) add me on facebook: Elvin Tubillara
