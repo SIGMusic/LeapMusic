@@ -4,7 +4,7 @@ import socket
 import threading
 from simpleOSC import initOSCClient, sendOSCMsg, initOSCServer, startOSCServer, closeOSC, setOSCHandler
 import Queue
-
+import midi
 
 class MusicGenerator:
     """
@@ -31,10 +31,18 @@ class MusicGenerator:
         sendOSCMsg("/sync/mellosynth_buffer/midivalue/index", [index])
         sendOSCMsg("/sync/mellosynth_buffer/midivalue/value", [value])
         print "sent osc to pd", self.total_calls
-        self.total_calls+=1
 
     def buffer_handler(self, addr, tags, stuff, source):
         self.pop_current_queue()
+
+    def send_start_signal(self):
+        """
+        Sends the start signal to the pure data patch
+        """
+        sendOSCMsg("/start", [1])
+
+
+
 
     def pop_current_queue(self):
         """
@@ -63,6 +71,20 @@ class MusicGenerator:
         for i in range(0, 31):
             Queue.Queue.put(self.bars_to_send, Queue.Queue.get(self.total_bars))
         self.pop_current_queue()
+        self.send_start_signal()
+
+
+    def midi(self, file_location):
+        midi_file = midi.read_midifile(file_location)
+        i = 0
+        track = midi_file.pop()
+        for thing in track:
+            if type(thing) is midi.NoteOnEvent:
+                Queue.Queue.put(self.total_bars, ( i, thing.data[0]))
+                i+=1
+                print thing.data, i
+            if type(thing) is midi.NoteOffEvent:
+                print thing
 
 
 class BufferSwitcherServer:
@@ -86,11 +108,13 @@ class BufferSwitcherServer:
                 print "I'm still alive..."
         except KeyboardInterrupt:
             print "closing all OSC connections... and exit"
+            sendOSCMsg("/start", [1])
             closeOSC()  # close the osc connection before exiting
 
 
 if __name__ == "__main__":
     mg = MusicGenerator()
-    mg.put_dummy_queue()
+  #  mg.put_dummy_queue()
+    mg.midi("mary.mid")
     mgThread = threading.Thread(None,mg.start)
     mgThread.start()
