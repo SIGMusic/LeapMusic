@@ -6,7 +6,9 @@ libpd: https://github.com/libpd
   
 Please put your stuff in the respective folders:  
 Pure Data Synths: Only pure data code in here  
-Interpreter Layer: Put other stuff like java in here  
+Interpreter Layer: Put the python code here  
+
+To set up the python libraries see the readme in the InterpreterLayer folder
 
 To run the synth:  
 0) get Pure Data Extended  

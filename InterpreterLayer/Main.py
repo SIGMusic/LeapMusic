@@ -5,7 +5,7 @@ import threading
 from simpleOSC import initOSCClient, sendOSCMsg, initOSCServer, startOSCServer, closeOSC, setOSCHandler
 import Queue
 import midi
-
+import AudioLayer
 class MusicGenerator:
     """
     This class will take inputs from "AudioLayer.py" and
@@ -18,7 +18,7 @@ class MusicGenerator:
            Initialize the music generator class
         """
         self.ip = "127.0.0.1"
-        self.pdportnumber = 9003
+        self.pdportnumber = 9003 # where to send data
         self.bars_to_send = Queue.Queue()
         self.total_bars = Queue.Queue()
         initOSCClient(self.ip, self.pdportnumber)
@@ -174,6 +174,12 @@ class BufferSwitcherServer:
         startOSCServer()
 
 if __name__ == "__main__":
+    al = AudioLayer.AudioLayer()
+    alThread = threading.Thread(None,al.run_server )
+    alThread.start()
+    time.sleep(5)
+    alClient = threading.Thread(None, al.run_client )
+    alClient.start()
     mg = MusicGenerator()
     mg.flush()
     mg.load_midi_file(mg.midi_file_name)
