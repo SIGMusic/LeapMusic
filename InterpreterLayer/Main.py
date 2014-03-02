@@ -5,7 +5,8 @@ import threading
 from simpleOSC import initOSCClient, sendOSCMsg, initOSCServer, startOSCServer, closeOSC, setOSCHandler
 import Queue
 import midi
-import AudioLayer
+
+
 class MusicGenerator:
     """
     This class will take inputs from "AudioLayer.py" and
@@ -35,7 +36,7 @@ class MusicGenerator:
             sendOSCMsg("/sync/mellosynth_buffer/m2/midivalue/index", [index])
             sendOSCMsg("/sync/mellosynth_buffer/m2/midivalue/value", [value])
 
-    def send_bar(self, index, value, synth_number):
+    def send_bar(self, index, value, synth_number, start):
         """
         sends a midi value
         """
@@ -43,20 +44,35 @@ class MusicGenerator:
         if synth_number == 1:
             sendOSCMsg("/sync/mellosynth_buffer/m1/midivalue/index", [index])
             sendOSCMsg("/sync/mellosynth_buffer/m1/midivalue/value", [value])
+            if start:
+                sendOSCMsg("/sync/mellosynth_buffer/m1/startnote/index", [index])
+                sendOSCMsg("/sync/mellosynth_buffer/m1/startnote/value", [1])
+            else:
+                sendOSCMsg("/sync/mellosynth_buffer/m1/startnote/index", [index])
+                sendOSCMsg("/sync/mellosynth_buffer/m1/startnote/value", [0])
         else:
             sendOSCMsg("/sync/mellosynth_buffer/m2/midivalue/index", [index])
             sendOSCMsg("/sync/mellosynth_buffer/m2/midivalue/value", [value])
+            if start:
+                sendOSCMsg("/sync/mellosynth_buffer/m2/startnote/index", [index])
+                sendOSCMsg("/sync/mellosynth_buffer/m2/startnote/value", [1])
+            else:
+                sendOSCMsg("/sync/mellosynth_buffer/m2/startnote/index", [index])
+                sendOSCMsg("/sync/mellosynth_buffer/m2/startnote/value", [0])
+
         print "sent osc to pd", self.total_calls
         self.total_calls+=1
 
     def buffer_handler(self, addr, tags, stuff, source):
         self.pop_current_queue()
+        print "buffer was switched"
 
     def send_start_signal(self):
         """
         Sends the start signal to the pure data patch
         """
         sendOSCMsg("/start", [1])
+        print "sent start signal"
 
     def pop_current_queue(self):
         """
@@ -67,17 +83,22 @@ class MusicGenerator:
         while not (Queue.Queue.empty(self.bars_to_send)):
             item = Queue.Queue.get(self.bars_to_send)
             print "item is", item
-            (index, value, synth_number) = item
-            self.send_bar(index, value, synth_number)
+            (index, value, synth_number, start) = item
+            self.send_bar(index, value, synth_number,start)
 
+        #TODO rename these dumb variables
+        if self.total_bars.empty():
+            return
 
-        (index,dum,dum2) = Queue.Queue.get(self.total_bars)
-        Queue.Queue.put(self.bars_to_send, (index,dum,dum2))
-        for i in range(index, index+31):
-            (index,dum,dum2) = Queue.Queue.get(self.total_bars)
-            Queue.Queue.put(self.bars_to_send, (index,dum,dum2))
-            if self.total_bars.empty():
-                self.load_midi_file(self.midi_file_name)
+        (index,dum,dum2,dum3) = Queue.Queue.get(self.total_bars)
+        Queue.Queue.put(self.bars_to_send, (index,dum,dum2,dum3))
+        i = index
+        while i < index+index+31:
+            if(self.total_bars.empty()):
+                break
+            (i,dum,dum2,dum3) = Queue.Queue.get(self.total_bars)
+            Queue.Queue.put(self.bars_to_send, (i,dum,dum2,dum3))
+
 
     def put_dummy_queue(self):
         """
@@ -90,17 +111,21 @@ class MusicGenerator:
         buffer_switcher = BufferSwitcherServer(self.buffer_handler)
         buffer_switcher_thread = threading.Thread(None, buffer_switcher.start)
         buffer_switcher_thread.start()
-        (index,dum,dum2) = Queue.Queue.get(self.total_bars)
-        Queue.Queue.put(self.bars_to_send, (index,dum,dum2))
-        for i in range(index, index+31):
-            (index,dum,dum2) = Queue.Queue.get(self.total_bars)
-            Queue.Queue.put(self.bars_to_send, (index,dum,dum2))
+        (index,dum,dum2,dum3) = Queue.Queue.get(self.total_bars)
+        Queue.Queue.put(self.bars_to_send, (index,dum,dum2,dum3))
+        i = index
+        while i < index+index+63:
+            if(self.total_bars.empty()):
+                break
+            (i,dum,dum2,dum3) = Queue.Queue.get(self.total_bars)
+            Queue.Queue.put(self.bars_to_send, (i,dum,dum2,dum3))
+
         self.pop_current_queue()
         self.send_start_signal()
+
         try:
             while True:
                 time.sleep(3)
-                print "I'm still alive..."
         except KeyboardInterrupt:
             print "closing all OSC connections... and exit"
             sendOSCMsg("/start", [1])
@@ -117,6 +142,7 @@ class MusicGenerator:
             if type(thing) is midi.NoteOnEvent:
                 tick = thing.tick
                 i = self.note_buffer_list.add(midi_val=thing.data[0], tick=tick, velocity=thing.data[1], i=i)
+                print "added note"
             if type(thing) is midi.NoteOffEvent:
                 print thing
 
@@ -134,27 +160,31 @@ class NoteBufferList:
         self.resolution = resolution
 
     def add(self, midi_val, tick, velocity, i):
+
         if midi_val in self.current_notes_to_add.keys():
             if velocity == 0:
-
                 del self.current_notes_to_add[midi_val]
                 synth = self.synths_being_used[midi_val]
                 del self.synths_being_used[midi_val]
                 self.synths.append(synth)
 
-            else:
-                for thing in self.current_notes_to_add:
-                    Queue.Queue.put(self.total_bars, thing)
+            for thing in self.current_notes_to_add.values():
+                (index_number, curr_midi_value, synth_number, start) = thing
+                Queue.Queue.put(self.total_bars, (index_number, curr_midi_value, synth_number, 0))
 
         else:
             synth = self.synths.pop()
             self.synths_being_used[midi_val]=synth
-            self.current_notes_to_add[midi_val]=(i, midi_val, synth)
+            self.current_notes_to_add[midi_val]=(i, midi_val, synth,1)
             for thing in self.current_notes_to_add.values():
-                Queue.Queue.put(self.total_bars, thing)
-                print "inserting index, value, synth",thing
+                (index_number, curr_midi_value, synth_number, start) = thing
+                if synth_number != synth:
+                    Queue.Queue.put(self.total_bars, (index_number, curr_midi_value, synth_number, 0))
+                else:
+                    Queue.Queue.put(self.total_bars, (index_number, curr_midi_value, synth_number, 1))
+                    print "inserting index, value, synth",thing
 
-        return i + tick // (self.resolution/4)
+        return i + tick // (self.resolution/2)
 
 
 class BufferSwitcherServer:
@@ -174,12 +204,7 @@ class BufferSwitcherServer:
         startOSCServer()
 
 if __name__ == "__main__":
-    al = AudioLayer.AudioLayer()
-    alThread = threading.Thread(None,al.run_server )
-    alThread.start()
-    time.sleep(5)
-    alClient = threading.Thread(None, al.run_client )
-    alClient.start()
+
     mg = MusicGenerator()
     mg.flush()
     mg.load_midi_file(mg.midi_file_name)

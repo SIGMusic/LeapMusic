@@ -1,9 +1,9 @@
 #N canvas 491 63 889 699 10;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_midivalue 64 float 3;
-#A 0 64 55 64 62 62 60 60 62 55 62 64 55 64 64 64 64 55 64 62 55 62
-62 62 62 55 62 64 55 64 67 67 83 84 85 86 87 88 89 0 1 2 3 4 5 6 7
-8 9 10 11 12 13 14 15 16 27 44 45 46 47 6 49 25 30;
+#A 0 64 0 0 0 0 0 0 0 0 0 0 0 0 0 0 64 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 62 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+60;
 #X coords 0 127 63 0 200 140 1 0 0;
 #X restore 507 46 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
@@ -30,7 +30,7 @@
 0.340709 0.263568 0.385709 0.385709 0.37928 0.359995 0.308567 0.314996
 0.340709;
 #X coords 0 0.9 63 0 200 140 1 0 0;
-#X restore 507 388 graph;
+#X restore 509 370 graph;
 #X obj 114 27 inlet;
 #X obj 56 566 outlet;
 #X obj 178 568 outlet;
@@ -38,7 +38,6 @@
 #X obj 30 27 inlet;
 #X text 26 10 Bang event;
 #X text 92 8 index to play;
-#X text 188 7 set midi;
 #X obj 198 62 routeOSC /midivalue /velocity /he;
 #X obj 198 27 inlet;
 #X obj 199 106 routeOSC /value /index;
@@ -51,22 +50,41 @@
 #X obj 322 341 tabwrite \$0_Harmonicity-Env;
 #X obj 171 396 tabread \$0_velocity;
 #X obj 54 364 tabread \$0_midivalue;
-#X connect 3 0 18 0;
+#X obj 339 472 routeOSC /startnote;
+#X obj 341 553 tabwrite \$0_startnote;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X array \$0_startnote 64 float 3;
+#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+#X coords 0 2 63 0 200 140 1 0 0;
+#X restore 513 536 graph;
+#X obj 347 506 routeOSC /value /index;
+#X obj 347 646 outlet;
+#X obj 347 605 tabread \$0_startnote;
+#X text 188 7 set midi/startnote;
+#X connect 3 0 17 0;
+#X connect 3 0 20 0;
 #X connect 3 0 21 0;
-#X connect 3 0 22 0;
-#X connect 7 0 18 0;
+#X connect 3 0 27 0;
+#X connect 7 0 17 0;
+#X connect 7 0 20 0;
 #X connect 7 0 21 0;
-#X connect 7 0 22 0;
-#X connect 11 0 13 0;
-#X connect 11 1 14 0;
-#X connect 11 2 15 0;
-#X connect 12 0 11 0;
-#X connect 13 0 19 0;
-#X connect 13 1 19 1;
-#X connect 14 0 17 0;
-#X connect 14 1 17 1;
-#X connect 15 0 20 0;
-#X connect 15 1 20 1;
-#X connect 18 0 6 0;
-#X connect 21 0 5 0;
-#X connect 22 0 4 0;
+#X connect 7 0 27 0;
+#X connect 10 0 12 0;
+#X connect 10 1 13 0;
+#X connect 10 2 14 0;
+#X connect 11 0 10 0;
+#X connect 11 0 22 0;
+#X connect 12 0 18 0;
+#X connect 12 1 18 1;
+#X connect 13 0 16 0;
+#X connect 13 1 16 1;
+#X connect 14 0 19 0;
+#X connect 14 1 19 1;
+#X connect 17 0 6 0;
+#X connect 20 0 5 0;
+#X connect 21 0 4 0;
+#X connect 22 0 25 0;
+#X connect 25 0 23 0;
+#X connect 25 1 23 1;
+#X connect 27 0 26 0;

@@ -110,7 +110,7 @@ class AudioLayer(object):
         print "client is running, sending to " + str(self.ip) +":" + str(self.sport)
         while(1):
             time.sleep(5)
-            
+
 layer = AudioLayer()
 try:
     thread.start_new_thread(layer.run_server, () )
