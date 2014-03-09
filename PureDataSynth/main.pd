@@ -12,13 +12,13 @@
 #X obj -131 -362 unpackOSC;
 #X obj -131 -272 metro;
 #X obj -131 -298 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
-1 1;
+0 1;
 #X obj -131 -327 routeOSC /start /ms_per_tick /async /sync /control
 ;
 #X obj -133 156 dac~;
 #X obj -72 -299 f;
 #X floatatom -72 -255 5 0 0 0 - - -;
-#N canvas 146 372 1440 828 channels 0;
+#N canvas 43 222 1440 828 channels 0;
 #X text 825 8 counter;
 #X obj 837 27 inlet;
 #X obj 836 133 f;
@@ -92,7 +92,7 @@
 #X connect 22 0 12 0;
 #X connect 22 1 13 0;
 #X coords 0 -1 1 1 815 330 2 815 330;
-#X restore -130 -196 pd channels;
+#X restore -133 -196 pd channels;
 #X msg 274 -231 0;
 #X obj 705 164 udpsend;
 #X obj 705 194 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
@@ -104,16 +104,15 @@
 #X text 239 -252 restart song;
 #X text -173 -274 clock;
 #X text 633 -220 buffer;
-#X obj -131 -397 udpreceive 9033;
-#X obj 639 159 print;
 #X obj 326 -252 print songbuffer;
+#X obj -131 -397 udpreceive 9036;
 #X connect 1 0 4 0;
 #X connect 2 0 8 0;
 #X connect 3 0 2 0;
 #X connect 4 0 3 0;
 #X connect 4 1 6 0;
 #X connect 4 3 8 2;
-#X connect 4 3 21 0;
+#X connect 4 3 19 0;
 #X connect 6 0 2 1;
 #X connect 6 0 7 0;
 #X connect 6 0 8 1;
@@ -121,9 +120,7 @@
 #X connect 7 0 2 1;
 #X connect 8 0 5 0;
 #X connect 8 0 5 1;
-#X connect 8 1 10 0;
-#X connect 8 1 20 0;
 #X connect 9 0 8 1;
 #X connect 10 0 11 0;
 #X connect 15 0 10 0;
-#X connect 19 0 1 0;
+#X connect 20 0 1 0;

@@ -19,7 +19,7 @@ class MusicGenerator:
            Initialize the music generator class
         """
         self.ip = "127.0.0.1"
-        self.pdportnumber = 9033 # where to send data
+        self.pdportnumber = 9036 # where to send data
         self.bars_to_send = Queue.Queue()
         self.total_bars = Queue.Queue()
         initOSCClient(self.ip, self.pdportnumber)
@@ -57,21 +57,23 @@ class MusicGenerator:
         channel_number = 0
         for channel in channels:
             channel_number += 1
-            instrument_id_message = "/sync/c" + str(channel_number) + "/i_number/"
-            instrument_parameter_message = "/sync/c" + str(channel_number) + "/p_instrument/"
-            volume_instrument_message = "/sync/c" + str(channel_number) + "/v_instrument/"
-            sendOSCMsg(instrument_id_message, [1])
-            sendOSCMsg(instrument_parameter_message, [.4])
-            sendOSCMsg(volume_instrument_message, [.5])
+            if channel:
+                instrument_id_message = "/sync/c" + str(channel_number) + "/i_number/"
+                instrument_parameter_message = "/sync/c" + str(channel_number) + "/p_instrument/"
+                volume_instrument_message = "/sync/c" + str(channel_number) + "/v_instrument/"
+                sendOSCMsg(instrument_id_message, [1])
+                sendOSCMsg(instrument_parameter_message, [.4])
+                sendOSCMsg(volume_instrument_message, [.5])
             for event in channel:
                 self.send_event(event, channel_number)
-        print "sent:", channel_number
+            print "sent:", channel_number
 
     def start(self):
        # buffer_switcher = BufferSwitcherServer(self.buffer_handler)
        # buffer_switcher_thread = threading.Thread(None, buffer_switcher.start)
        # buffer_switcher_thread.start()
         self.send_buffer()
+        time.sleep(5)
         self.send_start_signal()
 
         try:
@@ -92,7 +94,7 @@ class MusicGenerator:
         midi_file = midi.read_midifile(file_location)
         midi_file.reverse()
         midi_file.make_ticks_abs()
-        #print midi_file
+
         self.resolution = midi_file.resolution
         song_info_track = midi_file.pop()
 
@@ -182,4 +184,5 @@ if __name__ == "__main__":
   #  time.sleep(5)
     mg.load_midi_file(mg.midi_file_name)
     mgThread = threading.Thread(None, mg.start)
+
     mgThread.start()
