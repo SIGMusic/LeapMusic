@@ -1,0 +1,9 @@
+This folder contains the layer between hci and pure data.
+To do:
+Music Generator(python)
+PD Synths
+
+What you need:
+Python - http://www.python.org/getit/
+pyOSC - https://trac.v2.nl/wiki/pyOSC
+simpleOSC - http://ixi-audio.net/content/download/SimpleOSC_0.3.2.zip
