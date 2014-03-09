@@ -178,7 +178,7 @@ class BufferSwitcherServer:
 if __name__ == "__main__":
 
     mg = MusicGenerator()
-    # mg.hard_reset_buffer()
+    mg.hard_reset_buffer()
   #  time.sleep(5)
     mg.load_midi_file(mg.midi_file_name)
     mgThread = threading.Thread(None, mg.start)
