@@ -19,7 +19,7 @@ class MusicGenerator:
            Initialize the music generator class
         """
         self.ip = "127.0.0.1"
-        self.pdportnumber = 9036 # where to send data
+        self.pdportnumber = 9049 # where to send data
         self.bars_to_send = Queue.Queue()
         self.total_bars = Queue.Queue()
         initOSCClient(self.ip, self.pdportnumber)
@@ -47,7 +47,6 @@ class MusicGenerator:
         Sends the start signal to the pure data patch
         """
         sendOSCMsg("/ms_per_tick", [self.ms_per_tick])
-        sendOSCMsg("/start", [1])
 
         print "sent start signal with metro,lopass", self.ms_per_tick, 700
 
@@ -55,25 +54,28 @@ class MusicGenerator:
         print "sending buffer",
         channels = self.song_buffer.get_channel_events()
         channel_number = 0
+
         for channel in channels:
             channel_number += 1
             if channel:
-                instrument_id_message = "/sync/c" + str(channel_number) + "/i_number/"
-                instrument_parameter_message = "/sync/c" + str(channel_number) + "/p_instrument/"
-                volume_instrument_message = "/sync/c" + str(channel_number) + "/v_instrument/"
-                sendOSCMsg(instrument_id_message, [1])
-                sendOSCMsg(instrument_parameter_message, [.4])
-                sendOSCMsg(volume_instrument_message, [.5])
-            for event in channel:
-                self.send_event(event, channel_number)
-            print "sent:", channel_number
+                turn_on = "/sync/c" + str(channel_number) + "/toggle/"
+                sendOSCMsg(turn_on, [2])
+                channel_event_count = 0
+
+                for event in channel:
+                    self.send_event(event, channel_number)
+                    print "sent event:",event
+                    channel_event_count += 1
+                print "sent:", channel_number, channel_event_count
+        time.sleep(1)
+        sendOSCMsg("/clean", [1])
 
     def start(self):
        # buffer_switcher = BufferSwitcherServer(self.buffer_handler)
        # buffer_switcher_thread = threading.Thread(None, buffer_switcher.start)
        # buffer_switcher_thread.start()
         self.send_buffer()
-        time.sleep(5)
+        time.sleep(10)
         self.send_start_signal()
 
         try:
@@ -87,7 +89,7 @@ class MusicGenerator:
     def hard_reset_buffer(self):
         for channel_number in range(1,17):
             routing_message = "/sync/c" + str(channel_number) + "/midi/clean"
-            sendOSCMsg(routing_message,[1])
+            sendOSCMsg(routing_message, [1])
             print "clearing channel:", channel_number, routing_message
 
     def load_midi_file(self, file_location):
@@ -181,7 +183,7 @@ if __name__ == "__main__":
 
     mg = MusicGenerator()
     mg.hard_reset_buffer()
-    time.sleep(10)
+    time.sleep(3)
     mg.load_midi_file(mg.midi_file_name)
     mgThread = threading.Thread(None, mg.start)
 
