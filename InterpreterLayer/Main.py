@@ -5,13 +5,11 @@ import threading
 from simpleOSC import initOSCClient, sendOSCMsg, initOSCServer, startOSCServer, closeOSC, setOSCHandler
 import Queue
 import midi
-
-
+from Midi_Queue import MidiQueue
+import datetime
 class MusicGenerator:
     """
-    This class will take inputs from "AudioLayer.py" and
-    then generate music bars. Then  it will use "OSCSender" to send it to
-    the Pure Data patch that is running.
+    This class will take a queue of midi files and load them into the pure data sequencer
     """
 
     def __init__(self):
@@ -23,24 +21,17 @@ class MusicGenerator:
         self.bars_to_send = Queue.Queue()
         self.total_bars = Queue.Queue()
         initOSCClient(self.ip, self.pdportnumber)
-        self.total_calls = 0
-        self.midi_file_name = "guile__s_theme.mid"
-        self.resolution = 0
         self.song_buffer = None
         self.ms_per_tick = 0  # milliseconds per tick
-
+        self.total = 0
     def send_event(self, arg, channel_number):
         """
         sends a midi event
         """
 
-        (index, midi_val, velocity, tick) = arg
+        (index, midi_val, velocity, tick, channel) = arg
         routing_message = "/sync/c" + str(channel_number) + "/midi"
         sendOSCMsg(routing_message, [midi_val, velocity, tick, index])
-
-    def buffer_handler(self, addr, tags, stuff, source):
-        self.send_buffer()
-        print "buffer was switched"
 
     def send_start_signal(self):
         """
@@ -50,89 +41,102 @@ class MusicGenerator:
 
         print "sent start signal with metro,lopass", self.ms_per_tick, 700
 
+    def send_program_changes(self):
+        """
+            Sends the change program signal(changes the voice of a channel)
+        """
+        for voice in self.song_buffer.voices:
+            (channel_number, prgmchange) = voice
+            voice_route = "/prgm/"
+            sendOSCMsg(voice_route, [channel_number, prgmchange])
+
     def send_buffer(self):
-        print "sending buffer",
+        """
+        Sends the entire midi buffer over osc
+        """
         channels = self.song_buffer.get_channel_events()
         channel_number = 0
 
         for channel in channels:
-            channel_number += 1
             if channel:
+                (add_index, midi_val, velocity, tick, channel_number) = channel[0]
+
                 turn_on = "/sync/c" + str(channel_number) + "/toggle/"
+
                 sendOSCMsg(turn_on, [2])
+
                 channel_event_count = 0
 
                 for event in channel:
                     self.send_event(event, channel_number)
-                    print "sent event:",event
+
                     channel_event_count += 1
-                print "sent:", channel_number, channel_event_count
-        time.sleep(1)
+            self.total +=1
+            channel_number += 1
         sendOSCMsg("/clean", [1])
 
-    def start(self):
-       # buffer_switcher = BufferSwitcherServer(self.buffer_handler)
-       # buffer_switcher_thread = threading.Thread(None, buffer_switcher.start)
-       # buffer_switcher_thread.start()
+    def send_control_changes(self):
+        """
+        Sends the control changes, (volume,bank select MSB LSB)
+        """
+        for control_event in self.song_buffer.control:
+            print control_event
+            (channel, event_type, value) = control_event;
+            sendOSCMsg("/control", [channel,  event_type, value]);
+
+    def send_next_song(self):
+        self.send_control_changes()
+        self.send_program_changes()
         self.send_buffer()
-        time.sleep(10)
         self.send_start_signal()
 
-        try:
-            while True:
-                time.sleep(3)
-        except KeyboardInterrupt:
-            print "closing all OSC connections... and exit"
-            sendOSCMsg("/start", [1])
-            closeOSC()  # close the osc connection before exiting
 
     def hard_reset_buffer(self):
-        for channel_number in range(1,17):
+        print "clearing channels"
+        for channel_number in range(0,16):
             routing_message = "/sync/c" + str(channel_number) + "/midi/clean"
             sendOSCMsg(routing_message, [1])
-            print "clearing channel:", channel_number, routing_message
 
     def load_midi_file(self, file_location):
         midi_file = midi.read_midifile(file_location)
         midi_file.reverse()
         midi_file.make_ticks_abs()
 
-        self.resolution = midi_file.resolution
+        resolution = midi_file.resolution
         song_info_track = midi_file.pop()
 
         has_tempo_event = False
-        mpqn = 0
+        mpqn = 0  # milliseconds per quarter note
 
         for event in song_info_track:
 
             if type(event) is midi.SetTempoEvent:
-                print event
                 has_tempo_event = True
                 mpqn = (event.data[0] << 16) | (event.data[1] << 8) | event.data[2]
-                print "mpqn is&: ", mpqn
+                #  print "mpqn is&: ", mpqn
 
-        if mpqn==0:
+        if mpqn == 0:
             mpqn = 1
         current_tempo_in_beats_per_minute = 120
 
         if has_tempo_event:
             current_tempo_in_beats_per_minute = 60000000.0/mpqn
 
-        self.ms_per_tick = self.resolution * (current_tempo_in_beats_per_minute / 60.0)
+        self.ms_per_tick = resolution * (current_tempo_in_beats_per_minute / 60.0)
         self.ms_per_tick = 1000.0/self.ms_per_tick
         self.song_buffer = SongBuffer(time_per_tick=self.ms_per_tick)
-        print self.ms_per_tick
+        # print self.ms_per_tick
 
         for track in midi_file:
             self.song_buffer.add_track(track)
-
-        # self.song_buffer.display()
 
 
 class SongBuffer:
     def __init__(self, time_per_tick):
         self.time_per_tick = time_per_tick
         self.channels = []
+        self.voices = []
+        self.control = []
         self.channel_count = 0
 
     def add_track(self, track):
@@ -140,15 +144,22 @@ class SongBuffer:
         add_index = 0
         for event in track:
             if type(event) is midi.NoteOnEvent or type(event) is midi.NoteOffEvent:
-                self._add_to_channel_events(channel_events, event.data[0], event.data[1], event.tick, add_index)
+                self._add_to_channel_events(channel_events, event.data[0], event.data[1], event.tick, add_index, event.channel)
                 add_index += 1
+            if type(event) is midi.ProgramChangeEvent:
+                self.voices.append((event.channel,event.data[0]))
+                #print event
+            if type(event) is midi.ControlChangeEvent:
+                if event.data[0]==32 or event.data[0]==0 or event.data[0]==7:
+                    self.control.append((event.channel, event.data[0], event.data[1]))  # channel,type, value
 
+                   # print(event)
         self.channels.append(channel_events)
         if channel_events:
             self.channel_count += 1
 
-    def _add_to_channel_events(self, event, midi_val, velocity, tick, add_index):
-        event.append((add_index, midi_val, velocity, tick))
+    def _add_to_channel_events(self, event, midi_val, velocity, tick, add_index, channel):
+        event.append((add_index, midi_val, velocity, tick, channel))
         return add_index
 
     def get_channel_events(self):
@@ -163,28 +174,59 @@ class SongBuffer:
         channel += 1
 
 
-class BufferSwitcherServer:
+class MidiBufferServer:
     """
-        This class signals the music generator to move on to the next buffer
-        It is called by pure data when a bar is finished playing
+        This class signals the music generator to move on to the next song
+        It is called by pure data when a song is finished playing
     """
-    def __init__(self, handler):
-        self.buffer_number = 0
-        self.handler = handler
+    def __init__(self):
         self.ip = "127.0.01"
-        self.port = 9005
+        self.port = 13470
+        self.music_generator = MusicGenerator()
+        self.midi_queue = MidiQueue("midi_files")
+        self.file_index = 0
+        self.time = 0;
+        self.num_channels_on = 0
 
     def start(self):
         initOSCServer(self.ip, self.port)  # setup OSC server
-        setOSCHandler('/mbn', self.handler)
+        setOSCHandler('/send_next_song', self.buffer_handler)
         startOSCServer()
+        self.main_method()
+        sendOSCMsg("/startprogram", [1])
+
+
+    def poll(self):
+        """
+        Polls the program
+        """
+        try:
+            while True:
+                time.sleep(1000)
+        except KeyboardInterrupt:
+            print "closing all OSC connections... and exit"
+            closeOSC()  # close the osc connection before exiting
+
+    def main_method(self):
+        sendOSCMsg("/stop", [1])
+
+        self.time = time.time()
+        self.music_generator.hard_reset_buffer()
+        self.music_generator.load_midi_file(self.midi_queue.queue[self.file_index]);
+        self.file_index = (self.file_index + 1) % len(self.midi_queue.queue)
+        self.num_channels_on = self.music_generator.total
+        mgThread = threading.Thread(None, self.music_generator.send_next_song)
+        mgThread.start()
+
+    def buffer_handler(self,addr, tags, stuff, source):
+        if time.time()-self.time >= 10:
+            print "i tried", self.num_channels_on,self.music_generator.total
+            self.num_channels_on -= 1
+            if self.num_channels_on == 0:
+                self.main_method()
+            #print "buffer was switched"
+
 
 if __name__ == "__main__":
-
-    mg = MusicGenerator()
-    mg.hard_reset_buffer()
-    time.sleep(3)
-    mg.load_midi_file(mg.midi_file_name)
-    mgThread = threading.Thread(None, mg.start)
-
-    mgThread.start()
+    midi_buffer_server = MidiBufferServer()
+    midi_buffer_server.start()
