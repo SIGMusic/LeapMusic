@@ -7,6 +7,7 @@ import Queue
 import midi
 from Midi_Queue import MidiQueue
 import datetime
+
 class MusicGenerator:
     """
     This class will take a queue of midi files and load them into the pure data sequencer
@@ -85,9 +86,14 @@ class MusicGenerator:
             sendOSCMsg("/control", [channel,  event_type, value]);
 
     def send_next_song(self):
+        sendOSCMsg("/setgm", [1]);
+        time.sleep(.5)
         self.send_control_changes()
+        time.sleep(.5)
         self.send_program_changes()
+        time.sleep(.5)
         self.send_buffer()
+        time.sleep(.5)
         self.send_start_signal()
 
 
@@ -146,13 +152,14 @@ class SongBuffer:
             if type(event) is midi.NoteOnEvent or type(event) is midi.NoteOffEvent:
                 self._add_to_channel_events(channel_events, event.data[0], event.data[1], event.tick, add_index, event.channel)
                 add_index += 1
-            if type(event) is midi.ProgramChangeEvent:
+            elif type(event) is midi.ProgramChangeEvent:
                 self.voices.append((event.channel,event.data[0]))
                 #print event
-            if type(event) is midi.ControlChangeEvent:
+            elif type(event) is midi.ControlChangeEvent:
                 if event.data[0]==32 or event.data[0]==0 or event.data[0]==7:
                     self.control.append((event.channel, event.data[0], event.data[1]))  # channel,type, value
-
+                else:
+                    print "skipping :", event
                    # print(event)
         self.channels.append(channel_events)
         if channel_events:
@@ -184,6 +191,7 @@ class MidiBufferServer:
         self.port = 13470
         self.music_generator = MusicGenerator()
         self.midi_queue = MidiQueue("midi_files")
+        #self.midi_queue = MidiQueue("experimental_midi")
         self.file_index = 0
         self.time = 0;
         self.num_channels_on = 0
@@ -208,8 +216,6 @@ class MidiBufferServer:
             closeOSC()  # close the osc connection before exiting
 
     def main_method(self):
-        sendOSCMsg("/stop", [1])
-
         self.time = time.time()
         self.music_generator.hard_reset_buffer()
         self.music_generator.load_midi_file(self.midi_queue.queue[self.file_index]);
@@ -220,10 +226,7 @@ class MidiBufferServer:
 
     def buffer_handler(self,addr, tags, stuff, source):
         if time.time()-self.time >= 10:
-            print "i tried", self.num_channels_on,self.music_generator.total
-            self.num_channels_on -= 1
-            if self.num_channels_on == 0:
-                self.main_method()
+            self.main_method()
             #print "buffer was switched"
 
 
