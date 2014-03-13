@@ -19,5 +19,24 @@ To run the synth:
 4) open main.pd with pure data  
 5) click on all the "connect localhost ...."   
 6) click on the box above the metronome  
+
+
+
+------------------EOH---------------------  	
+Turn on the keyboard
+Set keyboard to song mode by pressing the "Song" button
+Start the Pure Data patch PureDataSynths/main.pd  
+Start the python script: InterpreterLayer/Main.py
+Start the other python script: AudioLayer.py
+----------  
+
+
+
+
+
+
+
+
    
 questions?(You probably have alot) add me on facebook: Elvin Tubillara
+
