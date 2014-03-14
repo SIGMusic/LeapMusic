@@ -24,13 +24,13 @@
 #X obj -289 -236 f;
 #X floatatom -274 -175 5 0 0 0 - - -;
 #X msg -220 -169 0;
-#X obj -338 32 udpsend;
-#X obj -338 62 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
-1;
+#X obj -355 160 udpsend;
+#X obj -355 190 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
+1 1;
 #X text -315 62 connected;
 #X text -323 8 leap sink;
 #X msg -345 -260 connect localhost 13371;
-#X obj -298 -32 common/channel_routing;
+#X obj -287 -24 common/channel_routing;
 #X text -284 -49 clock;
 #X obj 259 62 ctlout;
 #X obj 257 -33 pack f f f;
@@ -95,25 +95,25 @@
 /prgm /stop /setgm;
 #X obj 32 -298 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#N canvas 401 125 1085 821 async 0;
+#N canvas 103 142 1085 821 async 0;
 #X obj 45 24 inlet;
 #X obj 45 63 routeOSC /collide;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_velocity 32 float 3;
-#A 0 44 57 34 57 44 44 56 57 59 34 56 44 44 56 34 44 44 59 34 59 44
-44 56 59 34 44 44 57 59 34 57 44;
+#A 0 46 46 54 57 36 46 47 56 57 46 47 46 46 56 57 36 46 56 46 44 47
+46 46 56 54 57 36 46 58 36 44 47;
 #X coords 0 200 32 0 200 140 1 0 0;
 #X restore 611 150 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_midi_value 32 float 3;
-#A 0 55 71 55 73 43 43 78 74 59 43 76 44 44 76 44 43 43 64 43 61 42
-42 74 57 42 54 54 71 62 54 72 55;
+#A 0 54 54 66 69 54 78 68 78 68 76 69 42 42 76 69 42 74 74 83 59 68
+40 40 83 59 68 40 56 71 56 66 69;
 #X coords 0 128 32 0 200 140 1 0 0;
 #X restore 609 320 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_channel_value 32 float 3;
-#A 0 4 6 8 6 3 4 5 6 7 8 5 3 4 5 8 3 4 7 8 7 3 4 5 7 8 3 4 6 7 8 6
-3;
+#A 0 3 4 6 7 8 0 2 5 7 0 2 3 4 5 7 8 0 5 0 1 2 3 4 5 6 7 8 4 7 8 1
+2;
 #X coords 0 128 32 0 200 140 1 0 0;
 #X restore 609 497 graph;
 #X obj 261 9 inlet;
@@ -188,6 +188,8 @@
 #X connect 34 1 28 0;
 #X connect 37 0 35 0;
 #X restore -182 -251 pd async;
+#X msg -282 97 send /notes \$1 \$2 \$3;
+#X obj -281 128 packOSC;
 #X connect 1 0 43 0;
 #X connect 2 0 12 0;
 #X connect 3 0 2 0;
@@ -197,6 +199,7 @@
 #X connect 7 0 8 0;
 #X connect 11 0 7 0;
 #X connect 12 0 45 1;
+#X connect 12 0 46 0;
 #X connect 12 1 24 0;
 #X connect 15 0 18 0;
 #X connect 16 0 17 0;
@@ -237,3 +240,5 @@
 #X connect 43 6 38 0;
 #X connect 43 7 42 0;
 #X connect 44 0 42 0;
+#X connect 46 0 47 0;
+#X connect 47 0 7 0;
