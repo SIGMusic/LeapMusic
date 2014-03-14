@@ -1,4 +1,3 @@
-from simpleOSC import initOSCClient, sendOSCMsg
 import time
 import socket
 import threading
@@ -187,7 +186,7 @@ class MidiBufferServer:
         It is called by pure data when a song is finished playing
     """
     def __init__(self):
-        self.ip = "127.0.01"
+        self.ip = "127.0.0.1"
         self.port = 13470
         self.music_generator = MusicGenerator()
         self.midi_queue = MidiQueue("midi_files")
