@@ -61,11 +61,16 @@ def boundary_handler(addr, tags, stuff, source):
         time.sleep(.5)
 def contact_handler(addr, tags, stuff, source):
     if layer.PRINT_CONTACT and 'Boundary' in (stuff[0], stuff[2]):
-        print "---"
-        x = random.randint(0, 31)
-        print " sending random integer " + str(x) + " to 9049"
-        sendOSCMsg("/async/collide", [x])
-        print "---"
+        if (stuff[1], stuff[3]) not in layer.dictionary:
+            print "---"
+            layer.dictionary[stuff[1], stuff[3]] = time.time()
+            x = random.randint(0, 31)
+            print " sending random integer " + str(x) + " to 9049"
+            sendOSCMsg("/async/collide", [x])
+            print "---"
+    for key in layer.dictionary.keys():
+        if time.time() - layer.dictionary[key] > 0.3:
+            del layer.dictionary[key]
 
 def hand_handler(addr, tags, stuff, source):
     if layer.PRINT_HAND:
@@ -109,7 +114,8 @@ class AudioLayer(object):
         self.ip = "127.0.0.1" # receiving osc from 
         self.rport = 9433
         self.sport = 9049
-        
+        self.dictionary = {}
+
     def run_server(self):
 
         # OSC SERVER/HANDLERS #
