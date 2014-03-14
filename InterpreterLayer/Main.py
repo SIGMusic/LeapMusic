@@ -60,7 +60,9 @@ class MusicGenerator:
         for channel in channels:
             if channel:
                 (add_index, midi_val, velocity, tick, channel_number) = channel[0]
-
+                if channel_number==9:
+                    channel_number=10
+                print "channel:", channel_number
                 turn_on = "/sync/c" + str(channel_number) + "/toggle/"
 
                 sendOSCMsg(turn_on, [2])
@@ -72,7 +74,7 @@ class MusicGenerator:
 
                     channel_event_count += 1
             self.total +=1
-            channel_number += 1
+
         sendOSCMsg("/clean", [1])
 
     def send_control_changes(self):
@@ -187,7 +189,7 @@ class MidiBufferServer:
     """
 
     def __init__(self):
-        self.ip = "127.0.01"
+        self.ip = "127.0.0.1"
         self.port = 13470
         self.music_generator = MusicGenerator()
         self.midi_queue = MidiQueue("midi_files")
