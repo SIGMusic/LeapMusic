@@ -1,4 +1,4 @@
-#N canvas -14 25 1440 852 10;
+#N canvas 480 22 1440 852 10;
 #X declare -lib mrpeach;
 #X declare -lib mrpeach;
 #X declare -lib mrpeach;
