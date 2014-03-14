@@ -1,11 +1,12 @@
 #################
-#   IMPORTS	#
+#   IMPORTS	    #
 #################
 import sys
 from simpleOSC import initOSCClient, sendOSCMsg, initOSCServer, startOSCServer, closeOSC, setOSCHandler
 import OSC
 import thread
 import time
+import random
 
 
 
@@ -13,7 +14,7 @@ import time
 #   OSC HANDLERS    #
 #####################
 def shape_handler(addr, tags, stuff, source) :
-    if(layer.PRINT_SHAPE):
+    if layer.PRINT_SHAPE:
         print "---"
         print "received new osc shape msg from %s" % OSC.getUrlStr(source)
         print "with addr : %s" % addr
@@ -22,8 +23,36 @@ def shape_handler(addr, tags, stuff, source) :
         print "shape=" + stuff[0]
         print "---"
 
-def boundary_handler(addr, tags, stuff, source) :
-    if(layer.PRINT_BOUNDARY) :
+def bgred_handler(addr, tags, stuff, source):
+    if layer.PRINT_RED:
+        print "---"
+        print "received new osc bgrgb msg from %s" % OSC.getUrlStr(source)
+        print "with addr : %s" % addr
+        print "typetags %s" % tags
+        print "data %s" % stuff
+        print "---"
+
+def bggreen_handler(addr, tags, stuff, source):
+    if layer.PRINT_GREEN:
+        print "---"
+        print "received new osc bgrgb msg from %s" % OSC.getUrlStr(source)
+        print "with addr : %s" % addr
+        print "typetags %s" % tags
+        print "data %s" % stuff
+        print "---"
+
+def bgblue_handler(addr, tags, stuff, source):
+    if layer.PRINT_BLUE:
+        print "---"
+        print "received new osc bgrgb msg from %s" % OSC.getUrlStr(source)
+        print "with addr : %s" % addr
+        print "typetags %s" % tags
+        print "data %s" % stuff
+        print "---"
+
+
+def boundary_handler(addr, tags, stuff, source):
+    if layer.PRINT_BOUNDARY:
         print "---"
         print "received new osc boundary msg from %s" % OSC.getUrlStr(source)
         print "with addr : %s" % addr
@@ -31,16 +60,16 @@ def boundary_handler(addr, tags, stuff, source) :
         print "data %s" % stuff
         print "---"
         time.sleep(.5)
-def contact_handler(addr, tags, stuff, source) :
-    if(layer.PRINT_CONTACT) :
+def contact_handler(addr, tags, stuff, source):
+    if layer.PRINT_CONTACT:
         print "---"
-        print "received new osc contact msg from %s" % OSC.getUrlStr(source)
-        print "with addr : %s" % addr
-        print "typetags %s" % tags
-        print "data %s" % stuff
+        x = random.randint(0, 31)
+        print " sending random integer " + str(x) + " to 9049"
+        sendOSCMsg("/async/collide", [x])
         print "---"
-def hand_handler(addr, tags, stuff, source) :
-    if(layer.PRINT_HAND) :
+
+def hand_handler(addr, tags, stuff, source):
+    if layer.PRINT_HAND:
         print "---"
         print "received new osc hand msg from %s" % OSC.getUrlStr(source)
         print "with addr : %s" % addr
@@ -48,8 +77,8 @@ def hand_handler(addr, tags, stuff, source) :
         print "data %s" % stuff
         print "---"
         time.sleep(.5)
-def finger_handler(addr, tags, stuff, source) :
-    if(layer.PRINT_FINGER) :
+def finger_handler(addr, tags, stuff, source):
+    if layer.PRINT_FINGER:
         print "---"
         print "received new osc finger msg from %s" % OSC.getUrlStr(source)
         print "with addr : %s" % addr
@@ -57,8 +86,8 @@ def finger_handler(addr, tags, stuff, source) :
         print "data %s" % stuff
         print "---"
         time.sleep(.5)
-def background_handler(addr, tags, stuff, source) :
-    if(layer.PRINT_BACKGROUND) :
+def background_handler(addr, tags, stuff, source):
+    if layer.PRINT_BACKGROUND:
         print "---"
         print " sending " + str(stuff[0]/360) + " to 9003"
         sendOSCMsg("/async/hue", [stuff[0]/360])
@@ -72,13 +101,16 @@ class AudioLayer(object):
         #################
         self.PRINT_SHAPE = 0 # 0/1
         self.PRINT_BOUNDARY = 0 # 0/1
-        self.PRINT_CONTACT = 0 # 0/1
+        self.PRINT_CONTACT = 1 # 0/1
         self.PRINT_HAND = 0 # 0/1
         self.PRINT_FINGER = 0 # 0/1
-        self.PRINT_BACKGROUND = 1 # 0/1
+        self.PRINT_BACKGROUND = 0 # 0/1
+        self.PRINT_RED = 0
+        self.PRINT_GREEN = 0
+        self.PRINT_BLUE = 0
         self.ip = "127.0.0.1" # receiving osc from 
         self.rport = 9433
-        self.sport = 9003
+        self.sport = 9049
         
     def run_server(self):
 
@@ -91,6 +123,9 @@ class AudioLayer(object):
         setOSCHandler('/hand', hand_handler)
         setOSCHandler('/finger', finger_handler)
         setOSCHandler('/background', background_handler)
+        setOSCHandler('/bgrgb/red', bgred_handler)
+        setOSCHandler('/bgrgb/green', bggreen_handler)
+        setOSCHandler('/bgrgb/blue',bgblue_handler)
         # SERVER START #
         startOSCServer()
         print "server is running, listening at " + str(self.ip) + ":" + str(self.rport)
