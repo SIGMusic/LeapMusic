@@ -90,25 +90,25 @@
 #X restore 6 -266 pd use_GM;
 #X obj 32 -298 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#N canvas 250 83 1085 821 async 0;
+#N canvas 250 83 1085 821 async 1;
 #X obj 45 24 inlet;
 #X obj 45 63 routeOSC /collide;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_velocity 32 float 3;
-#A 0 84 84 32 32 32 127 103 103 103 54 127 84 74 84 68 63 53 43 101
-99 114 41 41 127 32 32 32 81 127 99 90 95;
+#A 0 127 127 127 106 127 127 106 127 103 127 127 106 127 127 127 127
+84 84 127 127 127 101 127 111 127 85 85 109 127 127 127 106;
 #X coords 0 200 32 0 200 140 1 0 0;
 #X restore 611 150 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_midi_value 32 float 3;
-#A 0 79 74 55 60 63 41 50 55 58 67 38 57 55 82 77 53 52 49 55 60 63
-75 70 31 56 62 65 67 43 53 58 62;
+#A 0 34 34 34 66 34 34 65 34 63 46 34 62 46 41 44 39 63 66 39 32 32
+66 32 68 34 62 65 70 34 34 34 68;
 #X coords 0 128 32 0 200 140 1 0 0;
 #X restore 609 320 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_channel_value 32 float 3;
-#A 0 5 5 0 0 0 6 0 0 0 5 6 0 0 5 5 0 0 0 0 0 0 5 5 6 0 0 0 5 6 0 0
-0;
+#A 0 5 5 5 2 5 5 2 5 2 5 5 2 5 5 5 5 1 1 5 5 5 2 5 2 5 1 1 2 5 5 5
+2;
 #X coords 0 128 32 0 200 140 1 0 0;
 #X restore 609 497 graph;
 #X obj 261 9 inlet;
@@ -135,7 +135,6 @@
 #X text 310 34 velocity \, midi \, channel;
 #X obj 236 160 unpack f f;
 #X obj 248 138 list-rev;
-#X obj 15 362 makenote 100 2000;
 #X obj 178 84 moses 1;
 #X obj 555 63 unpack f f f;
 #X obj 551 107 moses 1;
@@ -147,6 +146,7 @@
 #X obj 686 74 unpack f;
 #X obj 54 407 pack f f f;
 #X obj 73 188 t f f f;
+#X obj 15 362 makenote 100 100;
 #X connect 0 0 1 0;
 #X connect 1 0 14 0;
 #X connect 5 0 25 0;
@@ -156,15 +156,15 @@
 #X connect 9 0 11 0;
 #X connect 9 1 12 0;
 #X connect 9 2 19 0;
-#X connect 14 0 35 0;
-#X connect 16 0 29 0;
-#X connect 17 0 39 2;
+#X connect 14 0 34 0;
+#X connect 16 0 40 0;
+#X connect 17 0 38 2;
 #X connect 18 0 11 1;
 #X connect 18 0 12 1;
 #X connect 18 0 13 1;
 #X connect 19 0 13 0;
 #X connect 19 1 6 0;
-#X connect 22 0 30 0;
+#X connect 22 0 29 0;
 #X connect 22 1 24 1;
 #X connect 22 2 23 2;
 #X connect 23 0 9 0;
@@ -173,16 +173,16 @@
 #X connect 27 0 23 0;
 #X connect 27 1 23 1;
 #X connect 28 0 27 0;
-#X connect 29 0 39 0;
-#X connect 29 1 39 1;
-#X connect 30 1 24 0;
-#X connect 33 0 31 0;
-#X connect 35 0 40 0;
-#X connect 36 0 38 0;
-#X connect 39 0 20 0;
-#X connect 40 0 16 0;
-#X connect 40 1 15 0;
-#X connect 40 2 17 0;
+#X connect 29 1 24 0;
+#X connect 32 0 30 0;
+#X connect 34 0 39 0;
+#X connect 35 0 37 0;
+#X connect 38 0 20 0;
+#X connect 39 0 16 0;
+#X connect 39 1 15 0;
+#X connect 39 2 17 0;
+#X connect 40 0 38 0;
+#X connect 40 1 38 1;
 #X restore -182 -251 pd async;
 #X obj -281 128 packOSC;
 #X obj -344 -325 routeOSC /startprogram /ms_per_tick /sync /async /control
@@ -192,9 +192,8 @@
 #X obj -194 36 f;
 #X obj -283 30 t l b;
 #X obj -281 71 list append;
-#X obj -272 224 print;
 #X msg -282 97 send /notes \$1 \$2 \$3 \$4;
-#X obj 43 -43 + 0.1;
+#X obj 43 -43 + 0.0001;
 #X connect 1 0 46 0;
 #X connect 2 0 12 0;
 #X connect 3 0 2 0;
@@ -249,11 +248,10 @@
 #X connect 46 8 44 2;
 #X connect 46 8 47 0;
 #X connect 46 8 48 0;
-#X connect 48 0 54 0;
+#X connect 48 0 53 0;
 #X connect 49 0 51 1;
 #X connect 50 0 51 0;
 #X connect 50 1 49 0;
-#X connect 51 0 53 0;
-#X connect 53 0 45 0;
-#X connect 53 0 52 0;
-#X connect 54 0 49 1;
+#X connect 51 0 52 0;
+#X connect 52 0 45 0;
+#X connect 53 0 49 1;

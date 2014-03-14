@@ -60,6 +60,8 @@ def boundary_handler(addr, tags, stuff, source):
         print "---"
         time.sleep(.5)
 def contact_handler(addr, tags, stuff, source):
+    if time.time() - layer.time < .05:
+        return
     if layer.PRINT_CONTACT and 'Boundary' in (stuff[0], stuff[2]):
         if (stuff[1], stuff[3]) not in layer.dictionary:
             print "---"
@@ -71,6 +73,7 @@ def contact_handler(addr, tags, stuff, source):
     for key in layer.dictionary.keys():
         if time.time() - layer.dictionary[key] > 0.3:
             del layer.dictionary[key]
+    layer.time = time.time()
 
 def hand_handler(addr, tags, stuff, source):
     if layer.PRINT_HAND:
@@ -115,7 +118,7 @@ class AudioLayer(object):
         self.rport = 9433
         self.sport = 9049
         self.dictionary = {}
-
+        self.time = time.time()
     def run_server(self):
 
         # OSC SERVER/HANDLERS #
