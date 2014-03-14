@@ -13,7 +13,7 @@ import random
 #####################
 #   OSC HANDLERS    #
 #####################
-def shape_handler(addr, tags, stuff, source) :
+def shape_handler(addr, tags, stuff, source):
     if layer.PRINT_SHAPE:
         print "---"
         print "received new osc shape msg from %s" % OSC.getUrlStr(source)
@@ -50,7 +50,6 @@ def bgblue_handler(addr, tags, stuff, source):
         print "data %s" % stuff
         print "---"
 
-
 def boundary_handler(addr, tags, stuff, source):
     if layer.PRINT_BOUNDARY:
         print "---"
@@ -61,7 +60,7 @@ def boundary_handler(addr, tags, stuff, source):
         print "---"
         time.sleep(.5)
 def contact_handler(addr, tags, stuff, source):
-    if layer.PRINT_CONTACT:
+    if layer.PRINT_CONTACT and 'Boundary' in (stuff[0], stuff[2]):
         print "---"
         x = random.randint(0, 31)
         print " sending random integer " + str(x) + " to 9049"
@@ -71,10 +70,9 @@ def contact_handler(addr, tags, stuff, source):
 def hand_handler(addr, tags, stuff, source):
     if layer.PRINT_HAND:
         print "---"
-        print "received new osc hand msg from %s" % OSC.getUrlStr(source)
-        print "with addr : %s" % addr
-        print "typetags %s" % tags
-        print "data %s" % stuff
+        x = random.randint(0, 5)
+        print " sending random integer " + str(x) + " to 9049"
+        sendOSCMsg("/async/hand", [x])
         print "---"
         time.sleep(.5)
 def finger_handler(addr, tags, stuff, source):
