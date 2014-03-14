@@ -1,4 +1,4 @@
-#N canvas 185 518 1367 833 10;
+#N canvas 729 213 1367 833 10;
 #X declare -lib mrpeach;
 #X declare -lib mrpeach;
 #X declare -lib mrpeach;
@@ -20,13 +20,13 @@
 #X obj -345 -344 unpackOSC;
 #X obj -323 -70 metro;
 #X obj -323 -97 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
-0 1;
+1 1;
 #X obj -289 -236 f;
 #X floatatom -274 -175 5 0 0 0 - - -;
 #X msg -220 -169 0;
 #X obj -355 160 udpsend;
 #X obj -355 190 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1
-0 1;
+1 1;
 #X text -315 62 connected;
 #X text -323 8 leap sink;
 #X msg -345 -260 connect localhost 13371;
@@ -42,8 +42,8 @@
 #X obj 536 -294 unpack s f f;
 #X obj 535 -151 pack f f;
 #X obj 473 -117 list-rev;
-#X obj -314 -148 vradio 15 1 0 2 empty empty empty 0 -8 0 10 -262144
--1 -1 0;
+#X obj -312 -148 vradio 15 1 0 2 empty empty empty 0 -8 0 10 -262144
+-1 -1 1;
 #X obj -289 -205 t b f b;
 #X obj -309 -178 1;
 #X msg -149 146 send /send_next_song \$1;
@@ -93,25 +93,25 @@
 #X restore 6 -266 pd use_GM;
 #X obj 32 -298 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#N canvas 348 171 1085 821 async 1;
+#N canvas 338 88 1085 821 async 0;
 #X obj 45 24 inlet;
 #X obj 45 63 routeOSC /collide;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_velocity 32 float 3;
-#A 0 81 127 94 90 97 76 127 101 96 114 81 84 94 84 99 41 127 32 32
-32 62 76 99 89 100 41 41 127 32 32 32 76;
+#A 0 80 82 127 127 127 127 127 127 127 127 127 80 127 127 78 77 127
+127 127 127 127 127 127 127 127 127 127 127 127 127 82 127;
 #X coords 0 200 32 0 200 140 1 0 0;
 #X restore 611 150 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_midi_value 32 float 3;
-#A 0 77 29 53 58 62 79 29 55 60 63 72 77 53 58 62 82 29 55 60 63 75
-70 55 60 63 72 77 41 53 58 62 72;
+#A 0 51 60 32 44 32 32 74 44 75 32 77 46 34 77 53 62 46 27 27 39 27
+79 77 79 27 77 39 27 75 27 44 72;
 #X coords 0 128 32 0 200 140 1 0 0;
 #X restore 609 320 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_channel_value 32 float 3;
-#A 0 5 6 0 0 0 5 6 0 0 0 5 5 0 0 0 5 6 0 0 0 5 5 0 0 0 5 5 6 0 0 0
-5;
+#A 0 3 3 6 6 6 6 1 6 1 6 1 3 6 1 3 3 6 6 6 6 6 1 1 1 6 1 6 6 1 6 3
+1;
 #X coords 0 128 32 0 200 140 1 0 0;
 #X restore 609 497 graph;
 #X obj 261 9 inlet;
@@ -151,7 +151,7 @@
 #X obj 166 357 f;
 #X text 779 10 bpm;
 #X obj 73 188 t f f f b;
-#X obj 686 74 unpack s f;
+#X obj 686 74 unpack f;
 #X connect 0 0 1 0;
 #X connect 1 0 14 0;
 #X connect 5 0 26 0;
@@ -195,8 +195,9 @@
 #X restore -182 -251 pd async;
 #X msg -282 97 send /notes \$1 \$2 \$3;
 #X obj -281 128 packOSC;
-#X obj -345 -326 routeOSC /startprogram /ms_per_tick /sync /async /control
+#X obj -344 -325 routeOSC /startprogram /ms_per_tick /sync /async /control
 /prgm /stop /setgm /bpm;
+#X obj -53 -214 print adsf;
 #X connect 1 0 47 0;
 #X connect 2 0 12 0;
 #X connect 3 0 2 0;
@@ -249,3 +250,5 @@
 #X connect 47 5 20 0;
 #X connect 47 6 38 0;
 #X connect 47 7 42 0;
+#X connect 47 8 44 2;
+#X connect 47 8 48 0;

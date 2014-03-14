@@ -90,7 +90,7 @@ class MusicGenerator:
 
     def send_next_song(self):
         sendOSCMsg("/setgm", [1]);
-        sendOSCMsg("/bmp",[self.bpm])
+        sendOSCMsg("/bpm",[self.bpm])
         time.sleep(.5)
         self.send_control_changes()
         time.sleep(.5)
