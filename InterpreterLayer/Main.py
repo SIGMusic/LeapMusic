@@ -24,6 +24,8 @@ class MusicGenerator:
         self.song_buffer = None
         self.ms_per_tick = 0  # milliseconds per tick
         self.total = 0
+        self.bpm = 0;
+
     def send_event(self, arg, channel_number):
         """
         sends a midi event
@@ -88,6 +90,7 @@ class MusicGenerator:
 
     def send_next_song(self):
         sendOSCMsg("/setgm", [1]);
+        sendOSCMsg("/bmp",[self.bpm])
         time.sleep(.5)
         self.send_control_changes()
         time.sleep(.5)
@@ -128,6 +131,8 @@ class MusicGenerator:
 
         if has_tempo_event:
             current_tempo_in_beats_per_minute = 60000000.0/mpqn
+
+        self.bpm = current_tempo_in_beats_per_minute
 
         self.ms_per_tick = resolution * (current_tempo_in_beats_per_minute / 60.0)
         self.ms_per_tick = 1000.0/self.ms_per_tick
