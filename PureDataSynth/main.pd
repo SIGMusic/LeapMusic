@@ -1,4 +1,4 @@
-#N canvas 90 104 1367 833 10;
+#N canvas 26 51 1367 833 10;
 #X declare -lib mrpeach;
 #X declare -lib mrpeach;
 #X declare -lib mrpeach;
@@ -90,25 +90,25 @@
 #X restore 6 -266 pd use_GM;
 #X obj 32 -298 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
-#N canvas 250 83 1085 821 async 1;
+#N canvas 602 73 1085 821 async 1;
 #X obj 45 24 inlet;
 #X obj 45 63 routeOSC /collide;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_velocity 32 float 3;
-#A 0 127 127 127 106 127 127 106 127 103 127 127 106 127 127 127 127
-84 84 127 127 127 101 127 111 127 85 85 109 127 127 127 106;
+#A 0 111 111 127 43 43 43 127 127 111 111 111 43 43 127 101 127 67
+127 127 85 127 111 125 127 114 106 127 127 106 106 127 111;
 #X coords 0 200 32 0 200 140 1 0 0;
 #X restore 611 150 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_midi_value 32 float 3;
-#A 0 34 34 34 66 34 34 65 34 63 46 34 62 46 41 44 39 63 66 39 32 32
-66 32 68 34 62 65 70 34 34 34 68;
+#A 0 61 65 34 71 63 66 32 36 59 63 68 70 65 36 42 32 42 32 38 42 36
+42 38 38 42 71 35 36 63 66 36 70;
 #X coords 0 128 32 0 200 140 1 0 0;
 #X restore 609 320 graph;
 #N canvas 0 22 450 278 (subpatch) 0;
 #X array \$0_channel_value 32 float 3;
-#A 0 5 5 5 2 5 5 2 5 2 5 5 2 5 5 5 5 1 1 5 5 5 2 5 2 5 1 1 2 5 5 5
-2;
+#A 0 1 1 5 1 1 1 5 10 1 1 1 1 1 10 10 5 10 5 10 10 10 10 10 10 10 1
+5 10 1 1 10 1;
 #X coords 0 128 32 0 200 140 1 0 0;
 #X restore 609 497 graph;
 #X obj 261 9 inlet;
@@ -121,9 +121,9 @@
 #X obj 398 434 tabwrite \$0_velocity;
 #X obj 390 486 tabwrite \$0_channel_value;
 #X obj 51 97 routeOSC;
-#X obj 87 243 tabread \$0_velocity;
-#X obj 45 219 tabread \$0_midi_value;
-#X obj 56 276 tabread \$0_channel_value;
+#X obj 142 269 tabread \$0_velocity;
+#X obj 30 252 tabread \$0_midi_value;
+#X obj 66 291 tabread \$0_channel_value;
 #X obj 510 325 mod 32;
 #X obj 376 246 t f b;
 #X obj 94 503 noteout;
@@ -145,8 +145,14 @@
 #X text 779 10 bpm;
 #X obj 686 74 unpack f;
 #X obj 54 407 pack f f f;
-#X obj 73 188 t f f f;
+#X obj 67 171 t f f f;
 #X obj 15 362 makenote 100 100;
+#X obj 174 309 print "Got number";
+#X obj 158 331 print "Playing note";
+#X obj 32 201 random 31;
+#X obj 37 227 int;
+#X obj 27 177 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
 #X connect 0 0 1 0;
 #X connect 1 0 14 0;
 #X connect 5 0 25 0;
@@ -158,6 +164,7 @@
 #X connect 9 2 19 0;
 #X connect 14 0 34 0;
 #X connect 16 0 40 0;
+#X connect 16 0 42 0;
 #X connect 17 0 38 2;
 #X connect 18 0 11 1;
 #X connect 18 0 12 1;
@@ -178,11 +185,15 @@
 #X connect 34 0 39 0;
 #X connect 35 0 37 0;
 #X connect 38 0 20 0;
-#X connect 39 0 16 0;
+#X connect 39 0 45 0;
 #X connect 39 1 15 0;
 #X connect 39 2 17 0;
 #X connect 40 0 38 0;
 #X connect 40 1 38 1;
+#X connect 43 0 44 0;
+#X connect 44 0 41 0;
+#X connect 44 0 16 0;
+#X connect 45 0 43 0;
 #X restore -182 -251 pd async;
 #X obj -281 128 packOSC;
 #X obj -344 -325 routeOSC /startprogram /ms_per_tick /sync /async /control

@@ -66,8 +66,7 @@ def contact_handler(addr, tags, stuff, source):
         if (stuff[1], stuff[3]) not in layer.dictionary:
             print "---"
             layer.dictionary[stuff[1], stuff[3]] = time.time()
-            x = random.randint(0, 31)
-            print " sending random integer " + str(x) + " to 9049"
+            x = 1 #PureData needs this in order to feel happy
             sendOSCMsg("/async/collide", [x])
             print "---"
     for key in layer.dictionary.keys():
